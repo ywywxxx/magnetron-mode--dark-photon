@@ -1,0 +1,969 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Magnetron Dark Photon Sensitivity</title>
+  <style>
+    :root {
+      --bg: #f6f7f8;
+      --panel: #ffffff;
+      --ink: #1f2933;
+      --muted: #667085;
+      --line: #d9dee5;
+      --accent: #176b5d;
+      --accent-soft: #e5f2ef;
+      --warn: #9a3412;
+      --bad: #b42318;
+      --shadow: 0 1px 2px rgba(16, 24, 40, 0.08);
+    }
+
+    * {
+      box-sizing: border-box;
+    }
+
+    body {
+      margin: 0;
+      color: var(--ink);
+      background: var(--bg);
+      font-family: Inter, ui-sans-serif, system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+      font-size: 15px;
+      line-height: 1.45;
+      letter-spacing: 0;
+    }
+
+    main {
+      width: min(1180px, calc(100vw - 32px));
+      margin: 24px auto;
+      display: grid;
+      grid-template-columns: minmax(340px, 440px) 1fr;
+      gap: 16px;
+      align-items: start;
+    }
+
+    h1 {
+      grid-column: 1 / -1;
+      margin: 0;
+      font-size: 24px;
+      font-weight: 700;
+    }
+
+    h2 {
+      margin: 0 0 12px;
+      font-size: 15px;
+      font-weight: 700;
+    }
+
+    section {
+      background: var(--panel);
+      border: 1px solid var(--line);
+      border-radius: 8px;
+      box-shadow: var(--shadow);
+      padding: 16px;
+    }
+
+    .controls {
+      display: grid;
+      gap: 14px;
+    }
+
+    .control {
+      display: grid;
+      gap: 8px;
+      padding-bottom: 12px;
+      border-bottom: 1px solid var(--line);
+    }
+
+    .control:last-child {
+      border-bottom: 0;
+      padding-bottom: 0;
+    }
+
+    .label-row {
+      display: flex;
+      align-items: baseline;
+      justify-content: space-between;
+      gap: 12px;
+    }
+
+    label {
+      font-weight: 650;
+    }
+
+    .range-text {
+      color: var(--muted);
+      font-size: 12px;
+      white-space: nowrap;
+    }
+
+    .input-row {
+      display: grid;
+      grid-template-columns: 1fr 84px;
+      gap: 8px;
+      align-items: center;
+    }
+
+    input[type="range"] {
+      width: 100%;
+      accent-color: var(--accent);
+    }
+
+    input[type="number"] {
+      width: 100%;
+      min-width: 0;
+      height: 34px;
+      padding: 6px 8px;
+      border: 1px solid var(--line);
+      border-radius: 6px;
+      color: var(--ink);
+      background: #fff;
+      font: inherit;
+    }
+
+    .unit {
+      color: var(--muted);
+      font-size: 13px;
+      text-align: right;
+    }
+
+    .results {
+      display: grid;
+      gap: 16px;
+    }
+
+    .headline {
+      display: grid;
+      grid-template-columns: repeat(3, minmax(0, 1fr));
+      gap: 12px;
+    }
+
+    .metric {
+      border: 1px solid var(--line);
+      border-radius: 8px;
+      padding: 12px;
+      background: #fff;
+      min-width: 0;
+    }
+
+    .metric.primary {
+      border-color: #a9d6cd;
+      background: var(--accent-soft);
+    }
+
+    .metric .name {
+      color: var(--muted);
+      font-size: 12px;
+      margin-bottom: 4px;
+    }
+
+    .metric .value {
+      font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, "Liberation Mono", monospace;
+      font-size: 18px;
+      font-weight: 700;
+      overflow-wrap: anywhere;
+    }
+
+    .grid {
+      display: grid;
+      grid-template-columns: repeat(2, minmax(0, 1fr));
+      gap: 10px;
+    }
+
+    .row {
+      display: flex;
+      justify-content: space-between;
+      gap: 14px;
+      border-bottom: 1px solid var(--line);
+      padding: 8px 0;
+    }
+
+    .row:last-child {
+      border-bottom: 0;
+    }
+
+    .row span:first-child {
+      color: var(--muted);
+    }
+
+    .row span:last-child {
+      font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, "Liberation Mono", monospace;
+      text-align: right;
+      overflow-wrap: anywhere;
+    }
+
+    .status {
+      padding: 10px 12px;
+      border: 1px solid var(--line);
+      border-radius: 8px;
+      color: var(--muted);
+      background: #fff;
+    }
+
+    .status.error {
+      color: var(--bad);
+      border-color: #f3b5ad;
+      background: #fff4f2;
+    }
+
+    .chart-wrap {
+      width: 100%;
+      min-height: 320px;
+    }
+
+    canvas {
+      display: block;
+      width: 100%;
+      height: 320px;
+      border: 1px solid var(--line);
+      border-radius: 8px;
+      background: #fff;
+    }
+
+    @media (max-width: 880px) {
+      main {
+        grid-template-columns: 1fr;
+      }
+
+      .headline {
+        grid-template-columns: 1fr;
+      }
+
+      .grid {
+        grid-template-columns: 1fr;
+      }
+    }
+  </style>
+</head>
+<body>
+  <main>
+    <h1>Magnetron Dark Photon Sensitivity</h1>
+
+    <section class="controls" aria-label="Controls">
+      <h2>Parameters</h2>
+
+      <div class="control" data-control="omegaM">
+        <div class="label-row">
+          <label for="omegaMRange">omega_m</label>
+          <span class="range-text" id="omegaMRangeText"></span>
+        </div>
+        <input id="omegaMRange" type="range" min="0" max="1000" step="1">
+        <div class="input-row">
+          <input id="omegaMInput" type="number" step="any">
+          <div class="unit">neV</div>
+        </div>
+      </div>
+
+      <div class="control" data-control="omegaC">
+        <div class="label-row">
+          <label for="omegaCRange">omega_c</label>
+          <span class="range-text" id="omegaCRangeText"></span>
+        </div>
+        <input id="omegaCRange" type="range" min="0" max="1000" step="1">
+        <div class="input-row">
+          <input id="omegaCInput" type="number" step="any">
+          <div class="unit">meV</div>
+        </div>
+      </div>
+
+      <div class="control" data-control="omegaZ">
+        <div class="label-row">
+          <label for="omegaZRange">omega_z</label>
+          <span class="range-text" id="omegaZRangeText"></span>
+        </div>
+        <input id="omegaZRange" type="range" min="0" max="1000" step="1">
+        <div class="input-row">
+          <input id="omegaZInput" type="number" step="any">
+          <div class="unit">eV</div>
+        </div>
+      </div>
+
+      <div class="control" data-control="radius">
+        <div class="label-row">
+          <label for="radiusRange">R</label>
+          <span class="range-text">0.1 m - 10 m</span>
+        </div>
+        <input id="radiusRange" type="range" min="0" max="1000" step="1">
+        <div class="input-row">
+          <input id="radiusInput" type="number" step="any">
+          <div class="unit">m</div>
+        </div>
+      </div>
+
+      <div class="control" data-control="wallTemp">
+        <div class="label-row">
+          <label for="wallTempRange">T_wall</label>
+          <span class="range-text">1e-3 K - 1 K</span>
+        </div>
+        <input id="wallTempRange" type="range" min="0" max="1000" step="1">
+        <div class="input-row">
+          <input id="wallTempInput" type="number" step="any">
+          <div class="unit">K</div>
+        </div>
+      </div>
+
+      <div class="control" data-control="tAve">
+        <div class="label-row">
+          <label for="tAveRange">t_ave</label>
+          <span class="range-text">1e-9 sec - 1 sec</span>
+        </div>
+        <input id="tAveRange" type="range" min="0" max="1000" step="1">
+        <div class="input-row">
+          <input id="tAveInput" type="number" step="any">
+          <div class="unit">sec</div>
+        </div>
+      </div>
+
+      <div class="control" data-control="tObs">
+        <div class="label-row">
+          <label for="tObsRange">t_obs</label>
+          <span class="range-text">1e-6 sec - 1 year</span>
+        </div>
+        <input id="tObsRange" type="range" min="0" max="1000" step="1">
+        <div class="input-row">
+          <input id="tObsInput" type="number" step="any">
+          <div class="unit">sec</div>
+        </div>
+      </div>
+    </section>
+
+    <div class="results">
+      <section>
+        <h2>Boundary</h2>
+        <div class="headline">
+          <div class="metric primary">
+            <div class="name">epsilon_min</div>
+            <div class="value" id="epsilonMin"></div>
+          </div>
+          <div class="metric">
+            <div class="name">P_det per trial</div>
+            <div class="value" id="pDet"></div>
+          </div>
+          <div class="metric">
+            <div class="name">N_det</div>
+            <div class="value" id="nDet"></div>
+          </div>
+        </div>
+      </section>
+
+      <section>
+        <h2>Mass Scan</h2>
+        <div class="chart-wrap">
+          <canvas id="massPlot" width="900" height="420" aria-label="epsilon_min versus omega_m"></canvas>
+        </div>
+      </section>
+
+      <section>
+        <h2>Current Point</h2>
+        <div class="grid">
+          <div>
+            <div class="row"><span>omega_m</span><span id="outOmegaM"></span></div>
+            <div class="row"><span>omega_c</span><span id="outOmegaC"></span></div>
+            <div class="row"><span>omega_z</span><span id="outOmegaZ"></span></div>
+            <div class="row"><span>R</span><span id="outRadius"></span></div>
+            <div class="row"><span>T_wall</span><span id="outWallTemp"></span></div>
+            <div class="row"><span>t_ave</span><span id="outTAve"></span></div>
+            <div class="row"><span>t_obs</span><span id="outTObs"></span></div>
+          </div>
+          <div>
+            <div class="row"><span>sigma_noise</span><span id="outSigmaNoise"></span></div>
+            <div class="row"><span>sigma_m</span><span id="outSigmaM"></span></div>
+            <div class="row"><span>threshold</span><span id="outThreshold"></span></div>
+            <div class="row"><span>z_thr</span><span id="outZThr"></span></div>
+            <div class="row"><span>Gamma_m</span><span id="outGammaM"></span></div>
+          </div>
+        </div>
+      </section>
+
+      <section>
+        <h2>Response</h2>
+        <div class="grid">
+          <div>
+            <div class="row"><span>kappa_m^2</span><span id="outKappa"></span></div>
+            <div class="row"><span>epsilon_BBR</span><span id="outEpsilonBBR"></span></div>
+            <div class="row"><span>delta_c</span><span id="outDeltaC"></span></div>
+            <div class="row"><span>delta_m</span><span id="outDeltaM"></span></div>
+          </div>
+          <div>
+            <div class="row"><span>omega_m range</span><span id="outOmegaMRange"></span></div>
+            <div class="row"><span>omega_c range</span><span id="outOmegaCRange"></span></div>
+            <div class="row"><span>omega_z range</span><span id="outOmegaZRange"></span></div>
+          </div>
+        </div>
+      </section>
+
+      <div class="status" id="status"></div>
+    </div>
+  </main>
+
+  <script>
+    const U = {
+      GeV: 1.51927e24,
+      eV: 1.51927e15,
+      meV: 1.51927e12,
+      neV: 1.51927e6,
+      Hz: 1,
+      kHz: 1e3,
+      MHz: 1e6,
+      sec: 1,
+      year: 31536000,
+      cm: 3.335634875843604e-11,
+      m: 3.335634875843604e-9,
+      K: 86173.3 * 1.51927e6,
+      e: 0.303
+    };
+
+    const ranges = {
+      omegaCMin: 0.1 * U.meV,
+      omegaCMax: 1.0 * U.meV,
+      omegaZMin: 4.1e-9 * U.eV,
+      omegaZMax: 8.3e-7 * U.eV,
+      radiusMin: 0.1 * U.m,
+      radiusMax: 10 * U.m,
+      wallTempMin: 1e-3 * U.K,
+      wallTempMax: 1 * U.K,
+      tAveMin: 1e-9 * U.sec,
+      tAveMax: 1 * U.sec,
+      tObsMin: 1e-6 * U.sec,
+      tObsMax: U.year
+    };
+    ranges.omegaMMin = ranges.omegaZMin ** 2 / (2 * ranges.omegaCMax);
+    ranges.omegaMMax = ranges.omegaZMax ** 2 / (2 * ranges.omegaCMin);
+
+    const state = {
+      omegaM: 0.1 * U.neV,
+      omegaC: 0.1 * U.meV,
+      omegaZ: Math.sqrt(2 * 0.1 * U.meV * 0.1 * U.neV),
+      radius: 1 * U.m,
+      wallTemp: 0.01 * U.K,
+      tAve: 1e-6 * U.sec,
+      tObs: 6 * U.sec
+    };
+
+    let activeTune = "omegaC";
+    let suppress = false;
+
+    const controls = {
+      omegaM: control("omegaM", U.neV, "neV"),
+      omegaC: control("omegaC", U.meV, "meV"),
+      omegaZ: control("omegaZ", U.eV, "eV"),
+      radius: control("radius", U.m, "m"),
+      wallTemp: control("wallTemp", U.K, "K"),
+      tAve: control("tAve", U.sec, "sec"),
+      tObs: control("tObs", U.sec, "sec")
+    };
+
+    function control(id, unit, unitName) {
+      return {
+        range: document.getElementById(`${id}Range`),
+        input: document.getElementById(`${id}Input`),
+        rangeText: document.getElementById(`${id}RangeText`),
+        unit,
+        unitName,
+        min: 1,
+        max: 10
+      };
+    }
+
+    function clamp(value, min, max) {
+      return Math.min(Math.max(value, min), max);
+    }
+
+    function setBounds(name, min, max) {
+      controls[name].min = min;
+      controls[name].max = max;
+    }
+
+    function valueToSlider(value, min, max) {
+      const logMin = Math.log(min);
+      const logMax = Math.log(max);
+      return 1000 * (Math.log(value) - logMin) / (logMax - logMin);
+    }
+
+    function sliderToValue(raw, min, max) {
+      const t = Number(raw) / 1000;
+      return Math.exp(Math.log(min) + t * (Math.log(max) - Math.log(min)));
+    }
+
+    function format(value, unit, digits = 6) {
+      const x = value / unit;
+      if (!Number.isFinite(x)) return "not finite";
+      if (x === 0) return "0";
+      const ax = Math.abs(x);
+      if (ax >= 1e4 || ax < 1e-3) return x.toExponential(5);
+      return x.toPrecision(digits);
+    }
+
+    function setNumber(id, text) {
+      document.getElementById(id).textContent = text;
+    }
+
+    function updateBounds() {
+      setBounds("omegaM", ranges.omegaMMin, ranges.omegaMMax);
+      const omegaCMin = Math.max(ranges.omegaCMin, ranges.omegaZMin ** 2 / (2 * state.omegaM));
+      const omegaCMax = Math.min(ranges.omegaCMax, ranges.omegaZMax ** 2 / (2 * state.omegaM));
+      const omegaZMin = Math.max(ranges.omegaZMin, Math.sqrt(2 * ranges.omegaCMin * state.omegaM));
+      const omegaZMax = Math.min(ranges.omegaZMax, Math.sqrt(2 * ranges.omegaCMax * state.omegaM));
+      setBounds("omegaC", omegaCMin, omegaCMax);
+      setBounds("omegaZ", omegaZMin, omegaZMax);
+      setBounds("radius", ranges.radiusMin, ranges.radiusMax);
+      setBounds("wallTemp", ranges.wallTempMin, ranges.wallTempMax);
+      setBounds("tAve", ranges.tAveMin, ranges.tAveMax);
+      setBounds("tObs", ranges.tObsMin, ranges.tObsMax);
+
+      state.omegaC = clamp(state.omegaC, omegaCMin, omegaCMax);
+      state.omegaZ = clamp(state.omegaZ, omegaZMin, omegaZMax);
+      if (activeTune === "omegaC") {
+        state.omegaZ = Math.sqrt(2 * state.omegaC * state.omegaM);
+      } else {
+        state.omegaC = state.omegaZ ** 2 / (2 * state.omegaM);
+      }
+    }
+
+    function syncControl(name, value) {
+      const c = controls[name];
+      c.range.value = valueToSlider(value, c.min, c.max);
+      c.input.value = format(value, c.unit, 8);
+      if (c.rangeText) {
+        c.rangeText.textContent = `${format(c.min, c.unit)} ${c.unitName} - ${format(c.max, c.unit)} ${c.unitName}`;
+      }
+    }
+
+    function syncUI() {
+      suppress = true;
+      updateBounds();
+      syncControl("omegaM", state.omegaM);
+      syncControl("omegaC", state.omegaC);
+      syncControl("omegaZ", state.omegaZ);
+      syncControl("radius", state.radius);
+      syncControl("wallTemp", state.wallTemp);
+      syncControl("tAve", state.tAve);
+      syncControl("tObs", state.tObs);
+      suppress = false;
+      calculateAndRender();
+    }
+
+    function erfcApprox(x) {
+      const z = Math.abs(x);
+      const t = 1 / (1 + 0.5 * z);
+      const ans = t * Math.exp(
+        -z * z
+        - 1.26551223
+        + t * (
+          1.00002368
+          + t * (
+            0.37409196
+            + t * (
+              0.09678418
+              + t * (
+                -0.18628806
+                + t * (
+                  0.27886807
+                  + t * (
+                    -1.13520398
+                    + t * (
+                      1.48851587
+                      + t * (
+                        -0.82215223
+                        + t * 0.17087277
+                      )
+                    )
+                  )
+                )
+              )
+            )
+          )
+        )
+      );
+      return x >= 0 ? ans : 2 - ans;
+    }
+
+    function tailProbability(z) {
+      return 0.5 * erfcApprox(z / Math.sqrt(2));
+    }
+
+    function inverseTailProbability(p) {
+      let lo = 0;
+      let hi = 8;
+      while (tailProbability(hi) > p) hi *= 2;
+      for (let i = 0; i < 120; i += 1) {
+        const mid = 0.5 * (lo + hi);
+        if (tailProbability(mid) > p) lo = mid;
+        else hi = mid;
+      }
+      return 0.5 * (lo + hi);
+    }
+
+    function calculateFor(point) {
+      const nRequired = point.tObs / point.tAve;
+      const minTrials = Math.log(0.05) / Math.log(0.5);
+      if (nRequired <= minTrials) {
+        return { error: `t_obs / t_ave must be greater than ${minTrials.toPrecision(6)}` };
+      }
+
+      const pRequired = -Math.expm1(Math.log(0.05) / nRequired);
+      const zRequired = inverseTailProbability(pRequired);
+
+      const rhoDM = 4.5 * U.GeV / U.cm ** 3;
+      const R = point.radius;
+      const vDM = 1e-3;
+      const sin2thetaAvg = 2 / 3;
+      const nM = 1e9;
+      const nE = 1;
+
+      const sigmaNoise = 0.03 * U.Hz / Math.sqrt(point.tAve / U.sec);
+      const threshold = 5 * sigmaNoise;
+      const deltaC = 2 * Math.PI * 57 * U.kHz * (10 * U.MHz / (point.omegaZ / (2 * Math.PI)));
+      const deltaM = deltaC * point.omegaM / point.omegaC;
+      const deltaDM = point.omegaM * 1e-6;
+      const kappa = Math.max((point.omegaM * R) ** 4, (point.omegaM * R * vDM) ** 2);
+      const epsilonBBR = calculateBBRBound(point, kappa);
+      const gammaOverEpsilon2 =
+        kappa * nM * nE * (U.e ** 2 * Math.PI / 4) * (rhoDM / deltaDM) * sin2thetaAvg * R ** 2;
+      const signalPerEpsilon = deltaM * Math.sqrt(gammaOverEpsilon2 * point.tAve);
+      const epsilonMin = threshold / (zRequired * signalPerEpsilon);
+      const sigmaM = signalPerEpsilon * epsilonMin;
+      const gammaM = gammaOverEpsilon2 * epsilonMin ** 2;
+
+      return {
+        epsilonMin,
+        pRequired,
+        zRequired,
+        nRequired,
+        sigmaNoise,
+        threshold,
+        deltaC,
+        deltaM,
+        kappa,
+        epsilonBBR,
+        sigmaM,
+        gammaM
+      };
+    }
+
+    function calculateBBRBound(point, knownKappa = null) {
+      const rhoDM = 4.5 * U.GeV / U.cm ** 3;
+      const R = point.radius;
+      const vDM = 1e-3;
+      const kappa = knownKappa ?? Math.max((point.omegaM * R) ** 4, (point.omegaM * R * vDM) ** 2);
+      const thermalDenom = Math.expm1(point.omegaM / point.wallTemp);
+      if (!Number.isFinite(thermalDenom) || thermalDenom <= 0 || kappa <= 0) return 0;
+      const bbrRate = point.omegaM ** 3 / (2 * Math.PI * thermalDenom);
+      return Math.sqrt(bbrRate * (1e-6 * point.omegaM) / (rhoDM * kappa));
+    }
+
+    function calculate() {
+      return calculateFor(state);
+    }
+
+    function logFraction(value, min, max) {
+      return clamp((Math.log(value) - Math.log(min)) / (Math.log(max) - Math.log(min)), 0, 1);
+    }
+
+    function pointForOmegaM(omegaM) {
+      const omegaCMin = Math.max(ranges.omegaCMin, ranges.omegaZMin ** 2 / (2 * omegaM));
+      const omegaCMax = Math.min(ranges.omegaCMax, ranges.omegaZMax ** 2 / (2 * omegaM));
+      const omegaZMin = Math.max(ranges.omegaZMin, Math.sqrt(2 * ranges.omegaCMin * omegaM));
+      const omegaZMax = Math.min(ranges.omegaZMax, Math.sqrt(2 * ranges.omegaCMax * omegaM));
+
+      if (omegaCMin > omegaCMax || omegaZMin > omegaZMax) return null;
+
+      let omegaC;
+      let omegaZ;
+      if (activeTune === "omegaZ") {
+        const fraction = logFraction(state.omegaZ, controls.omegaZ.min, controls.omegaZ.max);
+        omegaZ = Math.exp(Math.log(omegaZMin) + fraction * (Math.log(omegaZMax) - Math.log(omegaZMin)));
+        omegaC = omegaZ ** 2 / (2 * omegaM);
+      } else {
+        const fraction = logFraction(state.omegaC, controls.omegaC.min, controls.omegaC.max);
+        omegaC = Math.exp(Math.log(omegaCMin) + fraction * (Math.log(omegaCMax) - Math.log(omegaCMin)));
+        omegaZ = Math.sqrt(2 * omegaC * omegaM);
+      }
+
+      return {
+        omegaM,
+        omegaC,
+        omegaZ,
+        radius: state.radius,
+        wallTemp: state.wallTemp,
+        tAve: state.tAve,
+        tObs: state.tObs
+      };
+    }
+
+    function drawPlot(currentResult) {
+      const canvas = document.getElementById("massPlot");
+      const rect = canvas.getBoundingClientRect();
+      const scale = window.devicePixelRatio || 1;
+      canvas.width = Math.max(600, Math.floor(rect.width * scale));
+      canvas.height = Math.max(320, Math.floor(rect.height * scale));
+      const ctx = canvas.getContext("2d");
+      ctx.setTransform(scale, 0, 0, scale, 0, 0);
+
+      const width = canvas.width / scale;
+      const height = canvas.height / scale;
+      const pad = { left: 72, right: 24, top: 24, bottom: 54 };
+      const plotW = width - pad.left - pad.right;
+      const plotH = height - pad.top - pad.bottom;
+
+      ctx.clearRect(0, 0, width, height);
+      ctx.fillStyle = "#fff";
+      ctx.fillRect(0, 0, width, height);
+
+      const points = [];
+      const n = 180;
+      for (let i = 0; i < n; i += 1) {
+        const f = i / (n - 1);
+        const omegaM = Math.exp(Math.log(ranges.omegaMMin) + f * (Math.log(ranges.omegaMMax) - Math.log(ranges.omegaMMin)));
+        const point = pointForOmegaM(omegaM);
+        if (!point) continue;
+        const result = calculateFor(point);
+        if (!result.error && Number.isFinite(result.epsilonMin) && result.epsilonMin > 0) {
+          points.push({ omegaM, epsilon: result.epsilonMin, epsilonBBR: result.epsilonBBR });
+        }
+      }
+
+      if (!currentResult.error && Number.isFinite(currentResult.epsilonMin)) {
+        points.push({
+          omegaM: state.omegaM,
+          epsilon: currentResult.epsilonMin,
+          epsilonBBR: currentResult.epsilonBBR,
+          current: true
+        });
+      }
+
+      if (points.length < 2) return;
+
+      const xMin = ranges.omegaMMin / U.neV;
+      const xMax = ranges.omegaMMax / U.neV;
+      const yValues = points
+        .flatMap(p => [p.epsilon, p.epsilonBBR])
+        .filter(y => Number.isFinite(y) && y > 0);
+      let yMin = Math.min(...yValues);
+      let yMax = Math.max(...yValues);
+      yMin = 10 ** Math.floor(Math.log10(yMin) - 0.25);
+      yMax = 10 ** Math.ceil(Math.log10(yMax) + 0.25);
+
+      const xToPx = x => pad.left + (Math.log10(x) - Math.log10(xMin)) / (Math.log10(xMax) - Math.log10(xMin)) * plotW;
+      const yToPx = y => pad.top + (Math.log10(yMax) - Math.log10(y)) / (Math.log10(yMax) - Math.log10(yMin)) * plotH;
+
+      ctx.strokeStyle = "#d9dee5";
+      ctx.lineWidth = 1;
+      ctx.fillStyle = "#667085";
+      ctx.font = "12px ui-monospace, SFMono-Regular, Menlo, Consolas, monospace";
+      ctx.textAlign = "center";
+      ctx.textBaseline = "top";
+
+      const xStart = Math.ceil(Math.log10(xMin));
+      const xEnd = Math.floor(Math.log10(xMax));
+      for (let e = xStart; e <= xEnd; e += 1) {
+        const x = 10 ** e;
+        const px = xToPx(x);
+        ctx.beginPath();
+        ctx.moveTo(px, pad.top);
+        ctx.lineTo(px, pad.top + plotH);
+        ctx.stroke();
+        ctx.fillText(`1e${e}`, px, pad.top + plotH + 8);
+      }
+
+      ctx.textAlign = "right";
+      ctx.textBaseline = "middle";
+      const yStart = Math.ceil(Math.log10(yMin));
+      const yEnd = Math.floor(Math.log10(yMax));
+      for (let e = yStart; e <= yEnd; e += 1) {
+        const y = 10 ** e;
+        const py = yToPx(y);
+        ctx.beginPath();
+        ctx.moveTo(pad.left, py);
+        ctx.lineTo(pad.left + plotW, py);
+        ctx.stroke();
+        ctx.fillText(`1e${e}`, pad.left - 8, py);
+      }
+
+      ctx.strokeStyle = "#1f2933";
+      ctx.lineWidth = 1.2;
+      ctx.strokeRect(pad.left, pad.top, plotW, plotH);
+
+      ctx.strokeStyle = "#176b5d";
+      ctx.lineWidth = 2;
+      ctx.setLineDash([]);
+      ctx.beginPath();
+      let started = false;
+      for (const p of points.filter(p => !p.current)) {
+        const px = xToPx(p.omegaM / U.neV);
+        const py = yToPx(p.epsilon);
+        if (!started) {
+          ctx.moveTo(px, py);
+          started = true;
+        } else {
+          ctx.lineTo(px, py);
+        }
+      }
+      ctx.stroke();
+
+      ctx.strokeStyle = "#9a3412";
+      ctx.lineWidth = 2;
+      ctx.setLineDash([6, 5]);
+      ctx.beginPath();
+      started = false;
+      for (const p of points.filter(p => !p.current && Number.isFinite(p.epsilonBBR) && p.epsilonBBR > 0)) {
+        const px = xToPx(p.omegaM / U.neV);
+        const py = yToPx(p.epsilonBBR);
+        if (!started) {
+          ctx.moveTo(px, py);
+          started = true;
+        } else {
+          ctx.lineTo(px, py);
+        }
+      }
+      ctx.stroke();
+      ctx.setLineDash([]);
+
+      if (!currentResult.error) {
+        const px = xToPx(state.omegaM / U.neV);
+        const py = yToPx(currentResult.epsilonMin);
+        ctx.fillStyle = "#b42318";
+        ctx.beginPath();
+        ctx.arc(px, py, 5, 0, 2 * Math.PI);
+        ctx.fill();
+        ctx.strokeStyle = "#ffffff";
+        ctx.lineWidth = 2;
+        ctx.stroke();
+
+        if (Number.isFinite(currentResult.epsilonBBR) && currentResult.epsilonBBR > 0) {
+          const pyBBR = yToPx(currentResult.epsilonBBR);
+          ctx.fillStyle = "#9a3412";
+          ctx.fillRect(px - 4, pyBBR - 4, 8, 8);
+          ctx.strokeStyle = "#ffffff";
+          ctx.lineWidth = 2;
+          ctx.strokeRect(px - 4, pyBBR - 4, 8, 8);
+        }
+      }
+
+      ctx.font = "12px Inter, system-ui, sans-serif";
+      ctx.textAlign = "left";
+      ctx.textBaseline = "middle";
+      const legendX = pad.left + 12;
+      let legendY = pad.top + 16;
+      ctx.strokeStyle = "#176b5d";
+      ctx.lineWidth = 2;
+      ctx.beginPath();
+      ctx.moveTo(legendX, legendY);
+      ctx.lineTo(legendX + 28, legendY);
+      ctx.stroke();
+      ctx.fillStyle = "#1f2933";
+      ctx.fillText("95% detection", legendX + 36, legendY);
+      legendY += 20;
+      ctx.strokeStyle = "#9a3412";
+      ctx.setLineDash([6, 5]);
+      ctx.beginPath();
+      ctx.moveTo(legendX, legendY);
+      ctx.lineTo(legendX + 28, legendY);
+      ctx.stroke();
+      ctx.setLineDash([]);
+      ctx.fillStyle = "#1f2933";
+      ctx.fillText("BBR floor", legendX + 36, legendY);
+
+      ctx.fillStyle = "#1f2933";
+      ctx.font = "13px Inter, system-ui, sans-serif";
+      ctx.textAlign = "center";
+      ctx.textBaseline = "bottom";
+      ctx.fillText("omega_m [neV]", pad.left + plotW / 2, height - 10);
+
+      ctx.save();
+      ctx.translate(18, pad.top + plotH / 2);
+      ctx.rotate(-Math.PI / 2);
+      ctx.fillText("epsilon", 0, 0);
+      ctx.restore();
+    }
+
+    function calculateAndRender() {
+      const result = calculate();
+      const status = document.getElementById("status");
+
+      setNumber("outOmegaM", `${format(state.omegaM, U.neV)} neV`);
+      setNumber("outOmegaC", `${format(state.omegaC, U.meV)} meV`);
+      setNumber("outOmegaZ", `${format(state.omegaZ, U.eV)} eV`);
+      setNumber("outRadius", `${format(state.radius, U.m)} m`);
+      setNumber("outWallTemp", `${format(state.wallTemp, U.K)} K`);
+      setNumber("outTAve", `${format(state.tAve, U.sec)} sec`);
+      setNumber("outTObs", `${format(state.tObs, U.sec)} sec`);
+      setNumber("outOmegaMRange", `${format(ranges.omegaMMin, U.neV)} - ${format(ranges.omegaMMax, U.neV)} neV`);
+      setNumber("outOmegaCRange", `${format(controls.omegaC.min, U.meV)} - ${format(controls.omegaC.max, U.meV)} meV`);
+      setNumber("outOmegaZRange", `${format(controls.omegaZ.min, U.eV)} - ${format(controls.omegaZ.max, U.eV)} eV`);
+
+      if (result.error) {
+        status.textContent = result.error;
+        status.className = "status error";
+        for (const id of ["epsilonMin", "pDet", "nDet", "outSigmaNoise", "outSigmaM", "outThreshold", "outZThr", "outGammaM", "outKappa", "outEpsilonBBR", "outDeltaC", "outDeltaM"]) {
+          setNumber(id, "not finite");
+        }
+        drawPlot(result);
+        return;
+      }
+
+      status.textContent = "ready";
+      status.className = "status";
+      setNumber("epsilonMin", result.epsilonMin.toExponential(6));
+      setNumber("pDet", result.pRequired.toExponential(6));
+      setNumber("nDet", result.nRequired.toExponential(6));
+      setNumber("outSigmaNoise", `${format(result.sigmaNoise, U.Hz)} Hz`);
+      setNumber("outSigmaM", `${format(result.sigmaM, U.Hz)} Hz`);
+      setNumber("outThreshold", `${format(result.threshold, U.Hz)} Hz`);
+      setNumber("outZThr", result.zRequired.toPrecision(6));
+      setNumber("outGammaM", `${format(result.gammaM, U.Hz)} Hz`);
+      setNumber("outKappa", result.kappa.toExponential(6));
+      setNumber("outEpsilonBBR", result.epsilonBBR > 0 ? result.epsilonBBR.toExponential(6) : "0");
+      setNumber("outDeltaC", `${format(result.deltaC, U.Hz)} Hz`);
+      setNumber("outDeltaM", `${format(result.deltaM, U.Hz)} Hz`);
+      drawPlot(result);
+    }
+
+    function setFromSlider(name) {
+      const c = controls[name];
+      const value = sliderToValue(c.range.value, c.min, c.max);
+      applyControlValue(name, value);
+    }
+
+    function setFromInput(name) {
+      const c = controls[name];
+      const raw = Number(c.input.value);
+      if (!Number.isFinite(raw) || raw <= 0) return;
+      applyControlValue(name, raw * c.unit);
+    }
+
+    function applyControlValue(name, value) {
+      if (name === "omegaM") {
+        state.omegaM = clamp(value, ranges.omegaMMin, ranges.omegaMMax);
+      } else if (name === "omegaC") {
+        activeTune = "omegaC";
+        state.omegaC = clamp(value, controls.omegaC.min, controls.omegaC.max);
+        state.omegaZ = Math.sqrt(2 * state.omegaC * state.omegaM);
+      } else if (name === "omegaZ") {
+        activeTune = "omegaZ";
+        state.omegaZ = clamp(value, controls.omegaZ.min, controls.omegaZ.max);
+        state.omegaC = state.omegaZ ** 2 / (2 * state.omegaM);
+      } else if (name === "radius") {
+        state.radius = clamp(value, ranges.radiusMin, ranges.radiusMax);
+      } else if (name === "wallTemp") {
+        state.wallTemp = clamp(value, ranges.wallTempMin, ranges.wallTempMax);
+      } else if (name === "tAve") {
+        state.tAve = clamp(value, ranges.tAveMin, ranges.tAveMax);
+      } else if (name === "tObs") {
+        state.tObs = clamp(value, ranges.tObsMin, ranges.tObsMax);
+      }
+      syncUI();
+    }
+
+    for (const name of Object.keys(controls)) {
+      controls[name].range.addEventListener("input", () => {
+        if (!suppress) setFromSlider(name);
+      });
+      controls[name].input.addEventListener("change", () => {
+        if (!suppress) setFromInput(name);
+      });
+    }
+
+    syncUI();
+  </script>
+</body>
+</html>
