@@ -109,12 +109,6 @@ add_relation(
 )
 
 add_relation(
-    name="n_m",
-    expression="1e9",
-    note="Default magnetron occupation number.",
-)
-
-add_relation(
     name="n_e",
     expression="1",
     note="Default electron number.",
@@ -208,12 +202,11 @@ add_relation(
 add_relation(
     name="Gamma_m",
     expression=(
-        "kappa_m_squared * n_m * n_e * (epsilon**2 * e**2 * pi / 4) "
+        "kappa_m_squared * n_e * (epsilon**2 * e**2 * pi / 4) "
         "* (rho_DM / Delta_m) * sin2theta_avg * R**2"
     ),
     depends_on=(
         "kappa_m_squared",
-        "n_m",
         "n_e",
         "epsilon",
         "e",

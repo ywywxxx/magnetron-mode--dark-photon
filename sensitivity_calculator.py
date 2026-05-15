@@ -221,7 +221,6 @@ def calculate_min_epsilon(state: State) -> Result:
     v_dm = 1e-3
     e_charge = U["e"]
     sin2theta_avg = 2.0 / 3.0
-    n_m = 1e9
     n_e = 1.0
 
     sigma_noise = 0.03 * U["Hz"] / sqrt(state.t_ave / U["sec"])
@@ -236,7 +235,6 @@ def calculate_min_epsilon(state: State) -> Result:
 
     gamma_over_epsilon2 = (
         kappa_m_squared
-        * n_m
         * n_e
         * (e_charge**2 * pi / 4.0)
         * (rho_dm / delta_dm)

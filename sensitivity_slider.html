@@ -607,7 +607,6 @@
       const R = point.radius;
       const vDM = 1e-3;
       const sin2thetaAvg = 2 / 3;
-      const nM = 1e9;
       const nE = 1;
 
       const sigmaNoise = 0.03 * U.Hz / Math.sqrt(point.tAve / U.sec);
@@ -618,7 +617,7 @@
       const kappa = Math.max((point.omegaM * R) ** 4, (point.omegaM * R * vDM) ** 2);
       const epsilonBBR = calculateBBRBound(point, kappa);
       const gammaOverEpsilon2 =
-        kappa * nM * nE * (U.e ** 2 * Math.PI / 4) * (rhoDM / deltaDM) * sin2thetaAvg * R ** 2;
+        kappa * nE * (U.e ** 2 * Math.PI / 4) * (rhoDM / deltaDM) * sin2thetaAvg * R ** 2;
       const signalPerEpsilon = deltaM * Math.sqrt(gammaOverEpsilon2 * point.tAve);
       const epsilonMin = threshold / (zRequired * signalPerEpsilon);
       const sigmaM = signalPerEpsilon * epsilonMin;
