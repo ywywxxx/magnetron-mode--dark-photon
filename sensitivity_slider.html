@@ -495,8 +495,26 @@
       document.getElementById(id).textContent = text;
     }
 
+    function omegaMRangeForCurrentTune() {
+      if (activeTune === "omegaZ") {
+        return [
+          state.omegaZ ** 2 / (2 * ranges.omegaCMax),
+          state.omegaZ ** 2 / (2 * ranges.omegaCMin)
+        ];
+      }
+      return [
+        ranges.omegaZMin ** 2 / (2 * state.omegaC),
+        ranges.omegaZMax ** 2 / (2 * state.omegaC)
+      ];
+    }
+
     function updateBounds() {
-      setBounds("omegaM", ranges.omegaMMin, ranges.omegaMMax);
+      state.omegaC = clamp(state.omegaC, ranges.omegaCMin, ranges.omegaCMax);
+      state.omegaZ = clamp(state.omegaZ, ranges.omegaZMin, ranges.omegaZMax);
+      const [omegaMMin, omegaMMax] = omegaMRangeForCurrentTune();
+      setBounds("omegaM", omegaMMin, omegaMMax);
+      state.omegaM = clamp(state.omegaM, omegaMMin, omegaMMax);
+
       const omegaCMin = Math.max(ranges.omegaCMin, ranges.omegaZMin ** 2 / (2 * state.omegaM));
       const omegaCMax = Math.min(ranges.omegaCMax, ranges.omegaZMax ** 2 / (2 * state.omegaM));
       const omegaZMin = Math.max(ranges.omegaZMin, Math.sqrt(2 * ranges.omegaCMin * state.omegaM));
@@ -648,10 +666,6 @@
       return calculateFor(state);
     }
 
-    function logFraction(value, min, max) {
-      return clamp((Math.log(value) - Math.log(min)) / (Math.log(max) - Math.log(min)), 0, 1);
-    }
-
     function pointForOmegaM(omegaM) {
       const omegaCMin = Math.max(ranges.omegaCMin, ranges.omegaZMin ** 2 / (2 * omegaM));
       const omegaCMax = Math.min(ranges.omegaCMax, ranges.omegaZMax ** 2 / (2 * omegaM));
@@ -663,13 +677,15 @@
       let omegaC;
       let omegaZ;
       if (activeTune === "omegaZ") {
-        const fraction = logFraction(state.omegaZ, controls.omegaZ.min, controls.omegaZ.max);
-        omegaZ = Math.exp(Math.log(omegaZMin) + fraction * (Math.log(omegaZMax) - Math.log(omegaZMin)));
+        omegaZ = state.omegaZ;
         omegaC = omegaZ ** 2 / (2 * omegaM);
       } else {
-        const fraction = logFraction(state.omegaC, controls.omegaC.min, controls.omegaC.max);
-        omegaC = Math.exp(Math.log(omegaCMin) + fraction * (Math.log(omegaCMax) - Math.log(omegaCMin)));
+        omegaC = state.omegaC;
         omegaZ = Math.sqrt(2 * omegaC * omegaM);
+      }
+
+      if (omegaC < omegaCMin || omegaC > omegaCMax || omegaZ < omegaZMin || omegaZ > omegaZMax) {
+        return null;
       }
 
       return {
@@ -704,9 +720,11 @@
 
       const points = [];
       const n = 180;
+      const xMin = controls.omegaM.min / U.neV;
+      const xMax = controls.omegaM.max / U.neV;
       for (let i = 0; i < n; i += 1) {
         const f = i / (n - 1);
-        const omegaM = Math.exp(Math.log(ranges.omegaMMin) + f * (Math.log(ranges.omegaMMax) - Math.log(ranges.omegaMMin)));
+        const omegaM = Math.exp(Math.log(controls.omegaM.min) + f * (Math.log(controls.omegaM.max) - Math.log(controls.omegaM.min)));
         const point = pointForOmegaM(omegaM);
         if (!point) continue;
         const result = calculateFor(point);
@@ -735,8 +753,6 @@
 
       if (points.length < 2) return;
 
-      const xMin = ranges.omegaMMin / U.neV;
-      const xMax = ranges.omegaMMax / U.neV;
       const yValues = points
         .flatMap(p => [p.epsilon, p.epsilonFullAve, p.epsilonBBR])
         .filter(y => Number.isFinite(y) && y > 0);
@@ -931,7 +947,7 @@
       setNumber("outWallTemp", `${format(state.wallTemp, U.K)} K`);
       setNumber("outTAve", `${format(state.tAve, U.sec)} sec`);
       setNumber("outTObs", `${format(state.tObs, U.sec)} sec`);
-      setNumber("outOmegaMRange", `${format(ranges.omegaMMin, U.neV)} - ${format(ranges.omegaMMax, U.neV)} neV`);
+      setNumber("outOmegaMRange", `${format(controls.omegaM.min, U.neV)} - ${format(controls.omegaM.max, U.neV)} neV`);
       setNumber("outOmegaCRange", `${format(controls.omegaC.min, U.meV)} - ${format(controls.omegaC.max, U.meV)} meV`);
       setNumber("outOmegaZRange", `${format(controls.omegaZ.min, U.eV)} - ${format(controls.omegaZ.max, U.eV)} eV`);
 
@@ -977,7 +993,7 @@
 
     function applyControlValue(name, value) {
       if (name === "omegaM") {
-        state.omegaM = clamp(value, ranges.omegaMMin, ranges.omegaMMax);
+        state.omegaM = clamp(value, controls.omegaM.min, controls.omegaM.max);
       } else if (name === "omegaC") {
         activeTune = "omegaC";
         state.omegaC = clamp(value, controls.omegaC.min, controls.omegaC.max);
