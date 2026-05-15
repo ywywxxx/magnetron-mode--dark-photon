@@ -27,26 +27,26 @@ def in_closed_range(value: float, lower: float, upper: float) -> bool:
     return lower - tol <= value <= upper + tol
 
 
-def tail_probability(z: float) -> float:
+def one_sided_tail_probability(z: float) -> float:
     """One-sided Gaussian tail P(Z > z), Z ~ Normal(0, 1)."""
     return 0.5 * erfc(z / sqrt(2.0))
 
 
-def inverse_tail_probability(p: float) -> float:
+def inverse_one_sided_tail_probability(p: float) -> float:
     """Return z such that P(Z > z) = p for 0 < p < 0.5."""
     if not 0.0 < p < 0.5:
         raise ValueError("p must satisfy 0 < p < 0.5")
 
     lo = 0.0
     hi = 8.0
-    while tail_probability(hi) > p:
+    while one_sided_tail_probability(hi) > p:
         hi *= 2.0
         if hi > 1_000.0:
             raise ValueError("p is too small to invert with double precision")
 
     for _ in range(200):
         mid = 0.5 * (lo + hi)
-        if tail_probability(mid) > p:
+        if one_sided_tail_probability(mid) > p:
             lo = mid
         else:
             hi = mid
@@ -206,15 +206,8 @@ class Result:
 def calculate_min_epsilon(state: State) -> Result:
     """Calculate the minimum epsilon that reaches 95% in state.t_obs."""
     n_required = state.t_obs / state.t_ave
-    min_trials = log(0.05) / log(0.5)
-    if n_required <= min_trials:
-        raise ValueError(
-            "No finite epsilon can reach 95% confidence because P_det <= 0.5. "
-            f"Need t_obs/t_ave > {min_trials:.8g}."
-        )
-
     p_required = -expm1(log(0.05) / n_required)
-    z_required = inverse_tail_probability(p_required)
+    z_required = inverse_one_sided_tail_probability(0.5 * p_required)
 
     rho_dm = 4.5 * U["GeV"] / U["cm"] ** 3
     r = U["m"]

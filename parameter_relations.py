@@ -249,14 +249,14 @@ add_relation(
     name="z_thr",
     expression="thr / sigma_m",
     depends_on=("thr", "sigma_m"),
-    note="Dimensionless threshold used to evaluate P(x > thr).",
+    note="Dimensionless threshold used to evaluate P(|x| > thr).",
 )
 
 add_relation(
     name="P_det",
-    expression="0.5 * erfc(z_thr / sqrt(2))",
+    expression="erfc(z_thr / sqrt(2))",
     depends_on=("z_thr",),
-    note="P_det = P(x > thr) for x ~ Normal(0, sigma_m).",
+    note="P_det = P(|x| > thr) for x ~ Normal(0, sigma_m).",
 )
 
 add_relation(

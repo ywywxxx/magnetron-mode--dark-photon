@@ -335,7 +335,7 @@
             <div class="value" id="epsilonMin"></div>
           </div>
           <div class="metric">
-            <div class="name">P_det per trial</div>
+            <div class="name">P_det per trial, two-sided</div>
             <div class="value" id="pDet"></div>
           </div>
           <div class="metric">
@@ -577,17 +577,17 @@
       return x >= 0 ? ans : 2 - ans;
     }
 
-    function tailProbability(z) {
+    function oneSidedTailProbability(z) {
       return 0.5 * erfcApprox(z / Math.sqrt(2));
     }
 
-    function inverseTailProbability(p) {
+    function inverseOneSidedTailProbability(p) {
       let lo = 0;
       let hi = 8;
-      while (tailProbability(hi) > p) hi *= 2;
+      while (oneSidedTailProbability(hi) > p) hi *= 2;
       for (let i = 0; i < 120; i += 1) {
         const mid = 0.5 * (lo + hi);
-        if (tailProbability(mid) > p) lo = mid;
+        if (oneSidedTailProbability(mid) > p) lo = mid;
         else hi = mid;
       }
       return 0.5 * (lo + hi);
@@ -595,13 +595,8 @@
 
     function calculateFor(point) {
       const nRequired = point.tObs / point.tAve;
-      const minTrials = Math.log(0.05) / Math.log(0.5);
-      if (nRequired <= minTrials) {
-        return { error: `t_obs / t_ave must be greater than ${minTrials.toPrecision(6)}` };
-      }
-
       const pRequired = -Math.expm1(Math.log(0.05) / nRequired);
-      const zRequired = inverseTailProbability(pRequired);
+      const zRequired = inverseOneSidedTailProbability(0.5 * pRequired);
 
       const rhoDM = 4.5 * U.GeV / U.cm ** 3;
       const R = point.radius;
