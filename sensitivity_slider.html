@@ -304,7 +304,7 @@
       <div class="control" data-control="tAve">
         <div class="label-row">
           <label for="tAveRange">t_ave</label>
-          <span class="range-text">1e-9 sec - 1 sec</span>
+          <span class="range-text" id="tAveRangeText"></span>
         </div>
         <input id="tAveRange" type="range" min="0" max="1000" step="1">
         <div class="input-row">
@@ -421,8 +421,6 @@
       radiusMax: 10 * U.m,
       wallTempMin: 1e-3 * U.K,
       wallTempMax: 1 * U.K,
-      tAveMin: 1e-9 * U.sec,
-      tAveMax: 1 * U.sec,
       tObsMin: 1e-6 * U.sec,
       tObsMax: U.year
     };
@@ -507,11 +505,12 @@
       setBounds("omegaZ", omegaZMin, omegaZMax);
       setBounds("radius", ranges.radiusMin, ranges.radiusMax);
       setBounds("wallTemp", ranges.wallTempMin, ranges.wallTempMax);
-      setBounds("tAve", ranges.tAveMin, ranges.tAveMax);
       setBounds("tObs", ranges.tObsMin, ranges.tObsMax);
+      setBounds("tAve", state.tObs / 1e9, state.tObs);
 
       state.omegaC = clamp(state.omegaC, omegaCMin, omegaCMax);
       state.omegaZ = clamp(state.omegaZ, omegaZMin, omegaZMax);
+      state.tAve = clamp(state.tAve, controls.tAve.min, controls.tAve.max);
       if (activeTune === "omegaC") {
         state.omegaZ = Math.sqrt(2 * state.omegaC * state.omegaM);
       } else {
@@ -941,7 +940,7 @@
       } else if (name === "wallTemp") {
         state.wallTemp = clamp(value, ranges.wallTempMin, ranges.wallTempMax);
       } else if (name === "tAve") {
-        state.tAve = clamp(value, ranges.tAveMin, ranges.tAveMax);
+        state.tAve = clamp(value, controls.tAve.min, controls.tAve.max);
       } else if (name === "tObs") {
         state.tObs = clamp(value, ranges.tObsMin, ranges.tObsMax);
       }
