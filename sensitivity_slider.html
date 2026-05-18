@@ -468,6 +468,16 @@
       tObs: control("tObs", U.sec, "sec")
     };
 
+    const existingLimitFiles = [
+      { name: "DM combined", path: "limit_data/dark_photon/DM_combined.txt", color: "#64748b" },
+      { name: "DM searches", path: "limit_data/dark_photon/DP_Combined_DarkMatterSearches.txt", color: "#111827" },
+      { name: "Laboratory", path: "limit_data/dark_photon/DP_Combined_Laboratory.txt", color: "#a16207" },
+      { name: "Stellar", path: "limit_data/dark_photon/DP_Combined_Stellar.txt", color: "#166534" },
+      { name: "Axion searches", path: "limit_data/dark_photon/DP_Combined_AxionSearchesRescaled.txt", color: "#7c3aed" }
+    ];
+
+    let existingLimitData = [];
+
     function control(id, unit, unitName) {
       return {
         range: document.getElementById(`${id}Range`),
@@ -511,6 +521,31 @@
 
     function setNumber(id, text) {
       document.getElementById(id).textContent = text;
+    }
+
+    async function loadExistingLimits() {
+      const loaded = [];
+      for (const file of existingLimitFiles) {
+        try {
+          const response = await fetch(file.path);
+          if (!response.ok) continue;
+          const text = await response.text();
+          const points = text
+            .trim()
+            .split(/\n+/)
+            .map(line => line.trim().split(/\s+/).map(Number))
+            .filter(row => row.length >= 2 && Number.isFinite(row[0]) && Number.isFinite(row[1]) && row[0] > 0 && row[1] > 0)
+            .map(row => ({
+              massNeV: row[0] * U.eV / U.neV,
+              epsilon: row[1]
+            }));
+          loaded.push({ ...file, points });
+        } catch (_) {
+          // Keep the UI usable if a local data file is unavailable.
+        }
+      }
+      existingLimitData = loaded;
+      calculateAndRender();
     }
 
     function updateBounds() {
@@ -766,6 +801,13 @@
       const yValues = points
         .flatMap(p => [p.epsilon, p.epsilonFullAve, p.epsilonBBR])
         .filter(y => Number.isFinite(y) && y > 0);
+      for (const limit of existingLimitData) {
+        for (const p of limit.points) {
+          if (p.massNeV >= xMin && p.massNeV <= xMax && p.epsilon > 0 && p.epsilon < 1) {
+            yValues.push(p.epsilon);
+          }
+        }
+      }
       let yMin = Math.min(...yValues);
       let yMax = Math.max(...yValues);
       yMin = 10 ** Math.floor(Math.log10(yMin) - 0.25);
@@ -830,6 +872,31 @@
         ctx.fillText(label, px + (align === "left" ? 5 : -5), pad.top + plotH - 6);
       }
       ctx.setLineDash([]);
+
+      ctx.lineWidth = 1.4;
+      ctx.setLineDash([]);
+      for (const limit of existingLimitData) {
+        ctx.strokeStyle = limit.color;
+        ctx.globalAlpha = 0.62;
+        ctx.beginPath();
+        let limitStarted = false;
+        for (const p of limit.points) {
+          if (p.massNeV < xMin || p.massNeV > xMax || p.epsilon <= 0 || p.epsilon >= 1) {
+            limitStarted = false;
+            continue;
+          }
+          const px = xToPx(p.massNeV);
+          const py = yToPx(p.epsilon);
+          if (!limitStarted) {
+            ctx.moveTo(px, py);
+            limitStarted = true;
+          } else {
+            ctx.lineTo(px, py);
+          }
+        }
+        ctx.stroke();
+      }
+      ctx.globalAlpha = 1;
 
       ctx.strokeStyle = "#176b5d";
       ctx.lineWidth = 2;
@@ -924,6 +991,15 @@
       ctx.textBaseline = "middle";
       const legendX = pad.left + 12;
       let legendY = pad.top + 16;
+      ctx.strokeStyle = "#64748b";
+      ctx.lineWidth = 2;
+      ctx.beginPath();
+      ctx.moveTo(legendX, legendY);
+      ctx.lineTo(legendX + 28, legendY);
+      ctx.stroke();
+      ctx.fillStyle = "#1f2933";
+      ctx.fillText("existing limits", legendX + 36, legendY);
+      legendY += 20;
       ctx.strokeStyle = "#176b5d";
       ctx.lineWidth = 2;
       ctx.beginPath();
@@ -1057,6 +1133,7 @@
     }
 
     syncUI();
+    loadExistingLimits();
   </script>
 </body>
 </html>
