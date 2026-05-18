@@ -103,6 +103,24 @@ add_relation(
 )
 
 add_relation(
+    name="R_trap",
+    expression="0.3 * mm",
+    note="Default trap radius entering the Gamma_m area factor.",
+)
+
+add_relation(
+    name="R_trap_min",
+    expression="0.1 * mm",
+    note="Lower adjustable bound for R_trap.",
+)
+
+add_relation(
+    name="R_trap_max",
+    expression="10 * cm",
+    note="Upper adjustable bound for R_trap.",
+)
+
+add_relation(
     name="sin2theta_avg",
     expression="2 / 3",
     note="Default angular average <sin^2 theta> for an isotropic dark matter field.",
@@ -203,7 +221,7 @@ add_relation(
     name="Gamma_m",
     expression=(
         "kappa_m_squared * n_e * (epsilon**2 * e**2 * pi / 4) "
-        "* (rho_DM / Delta_m) * sin2theta_avg * R**2"
+        "* (rho_DM / Delta_m) * sin2theta_avg * R_trap**2"
     ),
     depends_on=(
         "kappa_m_squared",
@@ -213,7 +231,7 @@ add_relation(
         "rho_DM",
         "Delta_m",
         "sin2theta_avg",
-        "R",
+        "R_trap",
     ),
     note=(
         "Signal rate for magnetron mode, including the geometric response "

@@ -211,6 +211,7 @@ def calculate_min_epsilon(state: State) -> Result:
 
     rho_dm = 4.5 * U["GeV"] / U["cm"] ** 3
     r = U["m"]
+    r_trap = 0.3 * U["mm"]
     v_dm = 1e-3
     e_charge = U["e"]
     sin2theta_avg = 2.0 / 3.0
@@ -232,7 +233,7 @@ def calculate_min_epsilon(state: State) -> Result:
         * (e_charge**2 * pi / 4.0)
         * (rho_dm / delta_dm)
         * sin2theta_avg
-        * r**2
+        * r_trap**2
     )
     signal_per_epsilon = delta_m * sqrt(gamma_over_epsilon2 * state.t_ave)
     epsilon_min = threshold / (z_required * signal_per_epsilon)

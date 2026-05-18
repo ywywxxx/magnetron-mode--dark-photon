@@ -61,8 +61,8 @@ Then open:
 http://localhost:8000/sensitivity_slider.html
 ```
 
-The slider UI lets you tune `omega_m`, `omega_c`, `omega_z`, `R`, `t_ave`,
-and `t_obs`. It shows the current point and the mass-scan curve in the
+The slider UI lets you tune `omega_m`, `omega_c`, `omega_z`, `R`, `R_trap`,
+`t_ave`, and `t_obs`. It shows the current point and the mass-scan curve in the
 `omega_m`-`epsilon_min` plane.
 
 ## Check the relation table

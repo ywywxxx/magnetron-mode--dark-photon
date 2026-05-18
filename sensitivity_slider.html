@@ -289,6 +289,18 @@
         </div>
       </div>
 
+      <div class="control" data-control="trapRadius">
+        <div class="label-row">
+          <label for="trapRadiusRange">R_trap</label>
+          <span class="range-text">0.1 mm - 10 cm</span>
+        </div>
+        <input id="trapRadiusRange" type="range" min="0" max="1000" step="1">
+        <div class="input-row">
+          <input id="trapRadiusInput" type="number" step="any">
+          <div class="unit">mm</div>
+        </div>
+      </div>
+
       <div class="control" data-control="wallTemp">
         <div class="label-row">
           <label for="wallTempRange">T_wall</label>
@@ -360,6 +372,7 @@
             <div class="row"><span>omega_c</span><span id="outOmegaC"></span></div>
             <div class="row"><span>omega_z</span><span id="outOmegaZ"></span></div>
             <div class="row"><span>R</span><span id="outRadius"></span></div>
+            <div class="row"><span>R_trap</span><span id="outTrapRadius"></span></div>
             <div class="row"><span>T_wall</span><span id="outWallTemp"></span></div>
             <div class="row"><span>t_ave</span><span id="outTAve"></span></div>
             <div class="row"><span>t_obs</span><span id="outTObs"></span></div>
@@ -407,6 +420,7 @@
       sec: 1,
       year: 31536000,
       cm: 3.335634875843604e-11,
+      mm: 3.335634875843604e-12,
       m: 3.335634875843604e-9,
       K: 86173.3 * 1.51927e6,
       e: 0.303
@@ -419,6 +433,8 @@
       omegaZMax: 8.3e-7 * U.eV,
       radiusMin: 0.1 * U.m,
       radiusMax: 10 * U.m,
+      trapRadiusMin: 0.1 * U.mm,
+      trapRadiusMax: 10 * U.cm,
       wallTempMin: 1e-3 * U.K,
       wallTempMax: 1 * U.K,
       tObsMin: 1e-6 * U.sec,
@@ -432,6 +448,7 @@
       omegaC: 0.1 * U.meV,
       omegaZ: Math.sqrt(2 * 0.1 * U.meV * 0.1 * U.neV),
       radius: 1 * U.m,
+      trapRadius: 0.3 * U.mm,
       wallTemp: 0.01 * U.K,
       tAve: 1e-6 * U.sec,
       tObs: 6 * U.sec
@@ -445,6 +462,7 @@
       omegaC: control("omegaC", U.meV, "meV"),
       omegaZ: control("omegaZ", U.eV, "eV"),
       radius: control("radius", U.m, "m"),
+      trapRadius: control("trapRadius", U.mm, "mm"),
       wallTemp: control("wallTemp", U.K, "K"),
       tAve: control("tAve", U.sec, "sec"),
       tObs: control("tObs", U.sec, "sec")
@@ -504,12 +522,14 @@
       setBounds("omegaC", omegaCMin, omegaCMax);
       setBounds("omegaZ", omegaZMin, omegaZMax);
       setBounds("radius", ranges.radiusMin, ranges.radiusMax);
+      setBounds("trapRadius", ranges.trapRadiusMin, ranges.trapRadiusMax);
       setBounds("wallTemp", ranges.wallTempMin, ranges.wallTempMax);
       setBounds("tObs", ranges.tObsMin, ranges.tObsMax);
       setBounds("tAve", state.tObs / 1e9, state.tObs);
 
       state.omegaC = clamp(state.omegaC, omegaCMin, omegaCMax);
       state.omegaZ = clamp(state.omegaZ, omegaZMin, omegaZMax);
+      state.trapRadius = clamp(state.trapRadius, controls.trapRadius.min, controls.trapRadius.max);
       state.tAve = clamp(state.tAve, controls.tAve.min, controls.tAve.max);
       if (activeTune === "omegaC") {
         state.omegaZ = Math.sqrt(2 * state.omegaC * state.omegaM);
@@ -534,6 +554,7 @@
       syncControl("omegaC", state.omegaC);
       syncControl("omegaZ", state.omegaZ);
       syncControl("radius", state.radius);
+      syncControl("trapRadius", state.trapRadius);
       syncControl("wallTemp", state.wallTemp);
       syncControl("tAve", state.tAve);
       syncControl("tObs", state.tObs);
@@ -599,6 +620,7 @@
 
       const rhoDM = 4.5 * U.GeV / U.cm ** 3;
       const R = point.radius;
+      const RTrap = point.trapRadius;
       const vDM = 1e-3;
       const sin2thetaAvg = 2 / 3;
       const nE = 1;
@@ -611,7 +633,7 @@
       const kappa = Math.max((point.omegaM * R) ** 4, (point.omegaM * R * vDM) ** 2);
       const epsilonBBR = calculateBBRBound(point, kappa);
       const gammaOverEpsilon2 =
-        kappa * nE * (U.e ** 2 * Math.PI / 4) * (rhoDM / deltaDM) * sin2thetaAvg * R ** 2;
+        kappa * nE * (U.e ** 2 * Math.PI / 4) * (rhoDM / deltaDM) * sin2thetaAvg * RTrap ** 2;
       const signalPerEpsilon = deltaM * Math.sqrt(gammaOverEpsilon2 * point.tAve);
       const epsilonMin = threshold / (zRequired * signalPerEpsilon);
       const sigmaM = signalPerEpsilon * epsilonMin;
@@ -677,6 +699,7 @@
         omegaC,
         omegaZ,
         radius: state.radius,
+        trapRadius: state.trapRadius,
         wallTemp: state.wallTemp,
         tAve: state.tAve,
         tObs: state.tObs
@@ -951,6 +974,7 @@
       setNumber("outOmegaC", `${format(state.omegaC, U.meV)} meV`);
       setNumber("outOmegaZ", `${format(state.omegaZ, U.eV)} eV`);
       setNumber("outRadius", `${format(state.radius, U.m)} m`);
+      setNumber("outTrapRadius", `${format(state.trapRadius, U.mm)} mm`);
       setNumber("outWallTemp", `${format(state.wallTemp, U.K)} K`);
       setNumber("outTAve", `${format(state.tAve, U.sec)} sec`);
       setNumber("outTObs", `${format(state.tObs, U.sec)} sec`);
@@ -1011,6 +1035,8 @@
         state.omegaC = state.omegaZ ** 2 / (2 * state.omegaM);
       } else if (name === "radius") {
         state.radius = clamp(value, ranges.radiusMin, ranges.radiusMax);
+      } else if (name === "trapRadius") {
+        state.trapRadius = clamp(value, ranges.trapRadiusMin, ranges.trapRadiusMax);
       } else if (name === "wallTemp") {
         state.wallTemp = clamp(value, ranges.wallTempMin, ranges.wallTempMax);
       } else if (name === "tAve") {

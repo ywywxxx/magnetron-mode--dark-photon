@@ -131,6 +131,7 @@ def _build_unit_conversion() -> dict[str, Fraction]:
     day = _rational(24) * hour
     year = _rational(365) * day
     cm = _rational("50677.3") / eV
+    mm = cm / _rational(10)
     m = _rational(100) * cm
 
     return {
@@ -139,6 +140,7 @@ def _build_unit_conversion() -> dict[str, Fraction]:
         "K": _rational("86173.3") * neV,
         "m": m,
         "cm": cm,
+        "mm": mm,
         "neV": neV,
         "meV": meV,
         "eV": eV,
