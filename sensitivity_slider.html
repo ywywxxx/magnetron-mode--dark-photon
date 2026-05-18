@@ -735,8 +735,11 @@
 
       if (points.length < 2) return;
 
-      const xMin = ranges.omegaMMin / U.neV;
-      const xMax = ranges.omegaMMax / U.neV;
+      const massMin = ranges.omegaMMin / U.neV;
+      const massMax = ranges.omegaMMax / U.neV;
+      const xPadding = 0.12 * (Math.log10(massMax) - Math.log10(massMin));
+      const xMin = 10 ** (Math.log10(massMin) - xPadding);
+      const xMax = 10 ** (Math.log10(massMax) + xPadding);
       const yValues = points
         .flatMap(p => [p.epsilon, p.epsilonFullAve, p.epsilonBBR])
         .filter(y => Number.isFinite(y) && y > 0);
@@ -784,6 +787,26 @@
       ctx.strokeStyle = "#1f2933";
       ctx.lineWidth = 1.2;
       ctx.strokeRect(pad.left, pad.top, plotW, plotH);
+
+      ctx.strokeStyle = "#475467";
+      ctx.lineWidth = 1.5;
+      ctx.setLineDash([5, 5]);
+      for (const [mass, label, align] of [
+        [massMin, "m_min", "left"],
+        [massMax, "m_max", "right"]
+      ]) {
+        const px = xToPx(mass);
+        ctx.beginPath();
+        ctx.moveTo(px, pad.top);
+        ctx.lineTo(px, pad.top + plotH);
+        ctx.stroke();
+        ctx.fillStyle = "#475467";
+        ctx.font = "12px Inter, system-ui, sans-serif";
+        ctx.textAlign = align;
+        ctx.textBaseline = "bottom";
+        ctx.fillText(label, px + (align === "left" ? 5 : -5), pad.top + plotH - 6);
+      }
+      ctx.setLineDash([]);
 
       ctx.strokeStyle = "#176b5d";
       ctx.lineWidth = 2;
