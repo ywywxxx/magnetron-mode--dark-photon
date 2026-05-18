@@ -72,6 +72,10 @@ the AxionLimits `DarkPhoton.ipynb` notebook:
 https://github.com/cajohare/AxionLimits/blob/master/DarkPhoton.ipynb
 ```
 
+Plasma-resonance based combined bounds are intentionally omitted from the
+overlay. The current comparison curves only use the direct dark matter search,
+laboratory, and axion-search-rescaled data files.
+
 ## Check the relation table
 
 ```bash
