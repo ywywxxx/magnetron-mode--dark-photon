@@ -471,6 +471,7 @@
     const existingLimitFiles = [
       { name: "DM searches", path: "limit_data/dark_photon/DP_Combined_DarkMatterSearches.txt", color: "#111827" },
       { name: "Laboratory", path: "limit_data/dark_photon/DP_Combined_Laboratory.txt", color: "#a16207" },
+      { name: "Leo T", path: "limit_data/dark_photon/LeoT.txt", color: "#f59e0b" },
       { name: "Axion searches", path: "limit_data/dark_photon/DP_Combined_AxionSearchesRescaled.txt", color: "#7c3aed" }
     ];
 
@@ -989,15 +990,20 @@
       ctx.textBaseline = "middle";
       const legendX = pad.left + 12;
       let legendY = pad.top + 16;
-      ctx.strokeStyle = "#64748b";
-      ctx.lineWidth = 2;
-      ctx.beginPath();
-      ctx.moveTo(legendX, legendY);
-      ctx.lineTo(legendX + 28, legendY);
-      ctx.stroke();
-      ctx.fillStyle = "#1f2933";
-      ctx.fillText("existing limits", legendX + 36, legendY);
-      legendY += 20;
+      for (const file of existingLimitFiles) {
+        if (!existingLimitData.some(limit => limit.name === file.name && limit.points.length > 1)) {
+          continue;
+        }
+        ctx.strokeStyle = file.color;
+        ctx.lineWidth = 2;
+        ctx.beginPath();
+        ctx.moveTo(legendX, legendY);
+        ctx.lineTo(legendX + 28, legendY);
+        ctx.stroke();
+        ctx.fillStyle = "#1f2933";
+        ctx.fillText(file.name, legendX + 36, legendY);
+        legendY += 20;
+      }
       ctx.strokeStyle = "#176b5d";
       ctx.lineWidth = 2;
       ctx.beginPath();
