@@ -1049,25 +1049,22 @@
       ctx.lineWidth = 1.2;
       ctx.strokeRect(pad.left, pad.top, plotW, plotH);
 
-      ctx.strokeStyle = "#475467";
-      ctx.lineWidth = 1.5;
-      ctx.setLineDash([5, 5]);
-      for (const [mass, label, align] of [
-        [massMin, "m_min", "left"],
-        [massMax, "m_max", "right"]
-      ]) {
-        const px = xToPx(mass);
+      const sensitivityCurve = points.filter(p => !p.current);
+      if (sensitivityCurve.length > 1) {
+        ctx.fillStyle = "rgba(23, 107, 93, 0.12)";
         ctx.beginPath();
-        ctx.moveTo(px, pad.top);
-        ctx.lineTo(px, pad.top + plotH);
-        ctx.stroke();
-        ctx.fillStyle = "#475467";
-        ctx.font = "12px Inter, system-ui, sans-serif";
-        ctx.textAlign = align;
-        ctx.textBaseline = "bottom";
-        ctx.fillText(label, px + (align === "left" ? 5 : -5), pad.top + plotH - 6);
+        const first = sensitivityCurve[0];
+        const firstX = xToPx(first.omegaM / U.neV);
+        ctx.moveTo(firstX, pad.top);
+        ctx.lineTo(firstX, yToPx(first.epsilon));
+        for (const p of sensitivityCurve.slice(1)) {
+          ctx.lineTo(xToPx(p.omegaM / U.neV), yToPx(p.epsilon));
+        }
+        const last = sensitivityCurve[sensitivityCurve.length - 1];
+        ctx.lineTo(xToPx(last.omegaM / U.neV), pad.top);
+        ctx.closePath();
+        ctx.fill();
       }
-      ctx.setLineDash([]);
 
       ctx.lineWidth = 1.4;
       ctx.setLineDash([]);
@@ -1099,7 +1096,7 @@
       ctx.setLineDash([]);
       ctx.beginPath();
       let started = false;
-      for (const p of points.filter(p => !p.current)) {
+      for (const p of sensitivityCurve) {
         const px = xToPx(p.omegaM / U.neV);
         const py = yToPx(p.epsilon);
         if (!started) {
