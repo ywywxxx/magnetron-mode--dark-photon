@@ -489,11 +489,12 @@
       radius: 1 * U.m,
       trapRadius: 0.3 * U.mm,
       wallTemp: 0.01 * U.K,
-      tAve: 1e-6 * U.sec,
-      tObs: 6 * U.sec
+      tObs: 6 * U.sec,
+      tAve: 2 * U.sec
     };
 
     let activeTune = "omegaC";
+    let tAveManuallySet = false;
     let suppress = false;
 
     const controls = {
@@ -1199,9 +1200,13 @@
       } else if (name === "wallTemp") {
         state.wallTemp = clamp(value, ranges.wallTempMin, ranges.wallTempMax);
       } else if (name === "tAve") {
+        tAveManuallySet = true;
         state.tAve = clamp(value, controls.tAve.min, controls.tAve.max);
       } else if (name === "tObs") {
         state.tObs = clamp(value, ranges.tObsMin, ranges.tObsMax);
+        if (!tAveManuallySet) {
+          state.tAve = state.tObs / 3;
+        }
       }
       syncUI();
     }
