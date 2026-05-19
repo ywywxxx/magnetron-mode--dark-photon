@@ -225,9 +225,44 @@
       display: flex;
       flex-wrap: wrap;
       gap: 6px;
-      max-height: 96px;
+      max-height: 150px;
       overflow: auto;
-      padding-top: 10px;
+      padding: 8px;
+      border: 1px solid var(--line);
+      border-radius: 8px;
+      background: #fff;
+    }
+
+    .limit-panel {
+      display: grid;
+      gap: 8px;
+      margin-top: 12px;
+    }
+
+    .limit-toolbar {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 8px;
+    }
+
+    .limit-actions {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 6px;
+    }
+
+    .limit-count {
+      color: var(--muted);
+      font-size: 12px;
+      white-space: nowrap;
+    }
+
+    .limit-action,
+    .limit-chip {
+      cursor: pointer;
+      font: inherit;
+      appearance: none;
     }
 
     .limit-chip {
@@ -239,9 +274,29 @@
       border: 1px solid var(--line);
       border-radius: 6px;
       background: #fff;
-      color: var(--muted);
+      color: var(--ink);
       font-size: 12px;
       white-space: nowrap;
+    }
+
+    .limit-chip.off {
+      color: var(--muted);
+      background: #f8fafc;
+      opacity: 0.58;
+    }
+
+    .limit-action {
+      padding: 5px 8px;
+      border: 1px solid var(--line);
+      border-radius: 6px;
+      background: #fff;
+      color: var(--ink);
+      font-size: 12px;
+    }
+
+    .limit-action:hover,
+    .limit-chip:hover {
+      border-color: #a9d6cd;
     }
 
     .limit-swatch {
@@ -400,7 +455,18 @@
         <div class="chart-wrap">
           <canvas id="massPlot" width="640" height="640" aria-label="epsilon_min versus omega_m"></canvas>
         </div>
-        <div class="limit-list" id="limitList" aria-label="Loaded limit datasets"></div>
+        <div class="limit-panel" aria-label="Limit dataset controls">
+          <div class="limit-toolbar">
+            <div class="limit-actions">
+              <button class="limit-action" type="button" id="showAllLimits">Show all</button>
+              <button class="limit-action" type="button" id="hideAllLimits">Hide all</button>
+              <button class="limit-action" type="button" id="showSingleLimits">Single only</button>
+              <button class="limit-action" type="button" id="showRescaledLimits">Rescaled only</button>
+            </div>
+            <div class="limit-count" id="limitCount"></div>
+          </div>
+          <div class="limit-list" id="limitList" aria-label="Loaded limit datasets"></div>
+        </div>
       </section>
 
       <section>
@@ -510,10 +576,21 @@
 
     let existingLimitFiles = [];
     let existingLimitData = [];
+    const LIMIT_VISIBILITY_KEY = "magnetronDarkPhotonHiddenLimits";
 
     const fallbackLimitFiles = [
       { name: "Leo T", path: "limit_data/dark_photon/LeoT.txt", category: "single" }
     ];
+
+    function getHiddenLimitPaths() {
+      try {
+        return new Set(JSON.parse(localStorage.getItem(LIMIT_VISIBILITY_KEY) || "[]"));
+      } catch (_) {
+        return new Set();
+      }
+    }
+
+    let hiddenLimitPaths = getHiddenLimitPaths();
 
     function control(id, unit, unitName) {
       return {
@@ -564,6 +641,23 @@
       return `hsl(${(index * 137.508) % 360}, 67%, 39%)`;
     }
 
+    function saveLimitVisibility() {
+      try {
+        localStorage.setItem(LIMIT_VISIBILITY_KEY, JSON.stringify([...hiddenLimitPaths]));
+      } catch (_) {
+        // The buttons still work for the current page even if storage is unavailable.
+      }
+    }
+
+    function setLimitVisibility(limit, visible) {
+      if (visible) {
+        hiddenLimitPaths.delete(limit.path);
+      } else {
+        hiddenLimitPaths.add(limit.path);
+      }
+      limit.visible = visible;
+    }
+
     async function loadLimitManifest() {
       try {
         const response = await fetch("limit_data/dark_photon/manifest.json");
@@ -589,17 +683,38 @@
       list.textContent = "";
       for (const limit of existingLimitData) {
         if (limit.points.length <= 1) continue;
-        const chip = document.createElement("div");
-        chip.className = "limit-chip";
+        const chip = document.createElement("button");
+        chip.className = `limit-chip${limit.visible ? "" : " off"}`;
+        chip.type = "button";
         chip.title = `${limit.name}: ${limit.path}`;
+        chip.setAttribute("aria-pressed", limit.visible ? "true" : "false");
         const swatch = document.createElement("span");
         swatch.className = "limit-swatch";
         swatch.style.background = limit.color;
         const name = document.createElement("span");
         name.textContent = limit.name;
         chip.append(swatch, name);
+        chip.addEventListener("click", () => {
+          setLimitVisibility(limit, !limit.visible);
+          saveLimitVisibility();
+          renderLimitList();
+          calculateAndRender();
+        });
         list.appendChild(chip);
       }
+      const visibleCount = existingLimitData.filter(limit => limit.visible && limit.points.length > 1).length;
+      const totalCount = existingLimitData.filter(limit => limit.points.length > 1).length;
+      const count = document.getElementById("limitCount");
+      if (count) count.textContent = `${visibleCount}/${totalCount} visible`;
+    }
+
+    function setVisibleLimits(predicate) {
+      for (const limit of existingLimitData) {
+        setLimitVisibility(limit, predicate(limit));
+      }
+      saveLimitVisibility();
+      renderLimitList();
+      calculateAndRender();
     }
 
     async function loadExistingLimits() {
@@ -619,7 +734,7 @@
               massNeV: row[0] * U.eV / U.neV,
               epsilon: row[1]
             }));
-          loaded.push({ ...file, points });
+          loaded.push({ ...file, visible: !hiddenLimitPaths.has(file.path), points });
         } catch (_) {
           // Keep the UI usable if a local data file is unavailable.
         }
@@ -882,7 +997,7 @@
       const yValues = points
         .flatMap(p => [p.epsilon, p.epsilonFullAve, p.epsilonBBR])
         .filter(y => Number.isFinite(y) && y > 0);
-      for (const limit of existingLimitData) {
+      for (const limit of existingLimitData.filter(limit => limit.visible)) {
         for (const p of limit.points) {
           if (p.massNeV >= xMin && p.massNeV <= xMax && p.epsilon > 0 && p.epsilon < 1) {
             yValues.push(p.epsilon);
@@ -956,7 +1071,7 @@
 
       ctx.lineWidth = 1.4;
       ctx.setLineDash([]);
-      for (const limit of existingLimitData) {
+      for (const limit of existingLimitData.filter(limit => limit.visible)) {
         ctx.strokeStyle = limit.color;
         ctx.globalAlpha = 0.62;
         ctx.beginPath();
@@ -1072,7 +1187,7 @@
       ctx.textBaseline = "middle";
       const legendX = pad.left + 12;
       let legendY = pad.top + 16;
-      const visibleLimitCount = existingLimitData.filter(limit => limit.points.length > 1).length;
+      const visibleLimitCount = existingLimitData.filter(limit => limit.visible && limit.points.length > 1).length;
       if (visibleLimitCount > 0) {
         ctx.strokeStyle = "#64748b";
         ctx.lineWidth = 2;
@@ -1219,6 +1334,19 @@
         if (!suppress) setFromInput(name);
       });
     }
+
+    document.getElementById("showAllLimits").addEventListener("click", () => {
+      setVisibleLimits(() => true);
+    });
+    document.getElementById("hideAllLimits").addEventListener("click", () => {
+      setVisibleLimits(() => false);
+    });
+    document.getElementById("showSingleLimits").addEventListener("click", () => {
+      setVisibleLimits(limit => limit.category === "single");
+    });
+    document.getElementById("showRescaledLimits").addEventListener("click", () => {
+      setVisibleLimits(limit => limit.category === "rescaled");
+    });
 
     syncUI();
     loadExistingLimits();
