@@ -1,0 +1,707 @@
+[
+  {
+    "name": "ADMX (rescaled)",
+    "path": "limit_data/dark_photon/rescaled/ADMX.txt",
+    "category": "rescaled"
+  },
+  {
+    "name": "ADMX Sidecar (rescaled)",
+    "path": "limit_data/dark_photon/rescaled/ADMX_Sidecar.txt",
+    "category": "rescaled"
+  },
+  {
+    "name": "ADMX SLIC (rescaled)",
+    "path": "limit_data/dark_photon/rescaled/ADMX_SLIC.txt",
+    "category": "rescaled"
+  },
+  {
+    "name": "ADMX2018 (rescaled)",
+    "path": "limit_data/dark_photon/rescaled/ADMX2018.txt",
+    "category": "rescaled"
+  },
+  {
+    "name": "ADMX2019 1 (rescaled)",
+    "path": "limit_data/dark_photon/rescaled/ADMX2019_1.txt",
+    "category": "rescaled"
+  },
+  {
+    "name": "ADMX2019 2 (rescaled)",
+    "path": "limit_data/dark_photon/rescaled/ADMX2019_2.txt",
+    "category": "rescaled"
+  },
+  {
+    "name": "ADMX2021 (rescaled)",
+    "path": "limit_data/dark_photon/rescaled/ADMX2021.txt",
+    "category": "rescaled"
+  },
+  {
+    "name": "ADMX2024 (rescaled)",
+    "path": "limit_data/dark_photon/rescaled/ADMX2024.txt",
+    "category": "rescaled"
+  },
+  {
+    "name": "ADMX2025 (rescaled)",
+    "path": "limit_data/dark_photon/rescaled/ADMX2025.txt",
+    "category": "rescaled"
+  },
+  {
+    "name": "APEX (rescaled)",
+    "path": "limit_data/dark_photon/rescaled/APEX.txt",
+    "category": "rescaled"
+  },
+  {
+    "name": "BRASS-p (rescaled)",
+    "path": "limit_data/dark_photon/rescaled/BRASS-p.txt",
+    "category": "rescaled"
+  },
+  {
+    "name": "CAPP-1 (rescaled)",
+    "path": "limit_data/dark_photon/rescaled/CAPP-1.txt",
+    "category": "rescaled"
+  },
+  {
+    "name": "CAPP-2 (rescaled)",
+    "path": "limit_data/dark_photon/rescaled/CAPP-2.txt",
+    "category": "rescaled"
+  },
+  {
+    "name": "CAPP-3 (rescaled)",
+    "path": "limit_data/dark_photon/rescaled/CAPP-3.txt",
+    "category": "rescaled"
+  },
+  {
+    "name": "CAPP-4 (rescaled)",
+    "path": "limit_data/dark_photon/rescaled/CAPP-4.txt",
+    "category": "rescaled"
+  },
+  {
+    "name": "CAPP-5 (rescaled)",
+    "path": "limit_data/dark_photon/rescaled/CAPP-5.txt",
+    "category": "rescaled"
+  },
+  {
+    "name": "CAPP-6 (rescaled)",
+    "path": "limit_data/dark_photon/rescaled/CAPP-6.txt",
+    "category": "rescaled"
+  },
+  {
+    "name": "CAPP-7 (rescaled)",
+    "path": "limit_data/dark_photon/rescaled/CAPP-7.txt",
+    "category": "rescaled"
+  },
+  {
+    "name": "CAPP-8 (rescaled)",
+    "path": "limit_data/dark_photon/rescaled/CAPP-8.txt",
+    "category": "rescaled"
+  },
+  {
+    "name": "CAPP-9 (rescaled)",
+    "path": "limit_data/dark_photon/rescaled/CAPP-9.txt",
+    "category": "rescaled"
+  },
+  {
+    "name": "CAPP-MAX (rescaled)",
+    "path": "limit_data/dark_photon/rescaled/CAPP-MAX.txt",
+    "category": "rescaled"
+  },
+  {
+    "name": "CAST-CAPP (rescaled)",
+    "path": "limit_data/dark_photon/rescaled/CAST-CAPP.txt",
+    "category": "rescaled"
+  },
+  {
+    "name": "DarkEfield (rescaled)",
+    "path": "limit_data/dark_photon/rescaled/DarkEfield.txt",
+    "category": "rescaled"
+  },
+  {
+    "name": "DarkEfield2 (rescaled)",
+    "path": "limit_data/dark_photon/rescaled/DarkEfield2.txt",
+    "category": "rescaled"
+  },
+  {
+    "name": "DM-Pathfinder (rescaled)",
+    "path": "limit_data/dark_photon/rescaled/DM-Pathfinder.txt",
+    "category": "rescaled"
+  },
+  {
+    "name": "FUNK (rescaled)",
+    "path": "limit_data/dark_photon/rescaled/FUNK.txt",
+    "category": "rescaled"
+  },
+  {
+    "name": "GigaBREAD (rescaled)",
+    "path": "limit_data/dark_photon/rescaled/GigaBREAD.txt",
+    "category": "rescaled"
+  },
+  {
+    "name": "HAYSTAC PhaseI (rescaled)",
+    "path": "limit_data/dark_photon/rescaled/HAYSTAC_PhaseI.txt",
+    "category": "rescaled"
+  },
+  {
+    "name": "HAYSTAC PhaseII ab (rescaled)",
+    "path": "limit_data/dark_photon/rescaled/HAYSTAC_PhaseII_ab.txt",
+    "category": "rescaled"
+  },
+  {
+    "name": "HAYSTAC PhaseII cd (rescaled)",
+    "path": "limit_data/dark_photon/rescaled/HAYSTAC_PhaseII_cd.txt",
+    "category": "rescaled"
+  },
+  {
+    "name": "Hefei (rescaled)",
+    "path": "limit_data/dark_photon/rescaled/Hefei.txt",
+    "category": "rescaled"
+  },
+  {
+    "name": "ORGAN-1a (rescaled)",
+    "path": "limit_data/dark_photon/rescaled/ORGAN-1a.txt",
+    "category": "rescaled"
+  },
+  {
+    "name": "ORGAN-1b (rescaled)",
+    "path": "limit_data/dark_photon/rescaled/ORGAN-1b.txt",
+    "category": "rescaled"
+  },
+  {
+    "name": "ORGAN-Q (rescaled)",
+    "path": "limit_data/dark_photon/rescaled/ORGAN-Q.txt",
+    "category": "rescaled"
+  },
+  {
+    "name": "QUAX (rescaled)",
+    "path": "limit_data/dark_photon/rescaled/QUAX.txt",
+    "category": "rescaled"
+  },
+  {
+    "name": "QUAX2 (rescaled)",
+    "path": "limit_data/dark_photon/rescaled/QUAX2.txt",
+    "category": "rescaled"
+  },
+  {
+    "name": "QUAX3 (rescaled)",
+    "path": "limit_data/dark_photon/rescaled/QUAX3.txt",
+    "category": "rescaled"
+  },
+  {
+    "name": "QUAX4 (rescaled)",
+    "path": "limit_data/dark_photon/rescaled/QUAX4.txt",
+    "category": "rescaled"
+  },
+  {
+    "name": "QUAX5 (rescaled)",
+    "path": "limit_data/dark_photon/rescaled/QUAX5.txt",
+    "category": "rescaled"
+  },
+  {
+    "name": "RADES2 (rescaled)",
+    "path": "limit_data/dark_photon/rescaled/RADES2.txt",
+    "category": "rescaled"
+  },
+  {
+    "name": "SHUKET (rescaled)",
+    "path": "limit_data/dark_photon/rescaled/SHUKET.txt",
+    "category": "rescaled"
+  },
+  {
+    "name": "SQuAD (rescaled)",
+    "path": "limit_data/dark_photon/rescaled/SQuAD.txt",
+    "category": "rescaled"
+  },
+  {
+    "name": "SRF scanning (rescaled)",
+    "path": "limit_data/dark_photon/rescaled/SRF_scanning.txt",
+    "category": "rescaled"
+  },
+  {
+    "name": "SUPAX (rescaled)",
+    "path": "limit_data/dark_photon/rescaled/SUPAX.txt",
+    "category": "rescaled"
+  },
+  {
+    "name": "TASEH (rescaled)",
+    "path": "limit_data/dark_photon/rescaled/TASEH.txt",
+    "category": "rescaled"
+  },
+  {
+    "name": "Tokyo-Dish (rescaled)",
+    "path": "limit_data/dark_photon/rescaled/Tokyo-Dish.txt",
+    "category": "rescaled"
+  },
+  {
+    "name": "Tokyo-Knirck (rescaled)",
+    "path": "limit_data/dark_photon/rescaled/Tokyo-Knirck.txt",
+    "category": "rescaled"
+  },
+  {
+    "name": "Tokyo-Tomita (rescaled)",
+    "path": "limit_data/dark_photon/rescaled/Tokyo-Tomita.txt",
+    "category": "rescaled"
+  },
+  {
+    "name": "WISPDMX (rescaled)",
+    "path": "limit_data/dark_photon/rescaled/WISPDMX.txt",
+    "category": "rescaled"
+  },
+  {
+    "name": "AFM",
+    "path": "limit_data/dark_photon/AFM.txt",
+    "category": "single"
+  },
+  {
+    "name": "ALPS",
+    "path": "limit_data/dark_photon/ALPS.txt",
+    "category": "single"
+  },
+  {
+    "name": "AMAILS",
+    "path": "limit_data/dark_photon/AMAILS.txt",
+    "category": "single"
+  },
+  {
+    "name": "APEX",
+    "path": "limit_data/dark_photon/APEX.txt",
+    "category": "single"
+  },
+  {
+    "name": "Blazars",
+    "path": "limit_data/dark_photon/Blazars.txt",
+    "category": "single"
+  },
+  {
+    "name": "BRASS-p",
+    "path": "limit_data/dark_photon/BRASS-p.txt",
+    "category": "single"
+  },
+  {
+    "name": "CAST",
+    "path": "limit_data/dark_photon/CAST.txt",
+    "category": "single"
+  },
+  {
+    "name": "Cavendish",
+    "path": "limit_data/dark_photon/Cavendish.txt",
+    "category": "single"
+  },
+  {
+    "name": "COBEFIRAS ",
+    "path": "limit_data/dark_photon/COBEFIRAS_.txt",
+    "category": "single"
+  },
+  {
+    "name": "COBEFIRAS Arsenadze",
+    "path": "limit_data/dark_photon/COBEFIRAS_Arsenadze.txt",
+    "category": "single"
+  },
+  {
+    "name": "COBEFIRAS Chluba",
+    "path": "limit_data/dark_photon/COBEFIRAS_Chluba.txt",
+    "category": "single"
+  },
+  {
+    "name": "COBEFIRAS Cyr",
+    "path": "limit_data/dark_photon/COBEFIRAS_Cyr.txt",
+    "category": "single"
+  },
+  {
+    "name": "COBEFIRAS SpectralDistortions",
+    "path": "limit_data/dark_photon/COBEFIRAS_SpectralDistortions.txt",
+    "category": "single"
+  },
+  {
+    "name": "Cosmology Arias",
+    "path": "limit_data/dark_photon/Cosmology_Arias.txt",
+    "category": "single"
+  },
+  {
+    "name": "Cosmology Caputo HeII",
+    "path": "limit_data/dark_photon/Cosmology_Caputo_HeII.txt",
+    "category": "single"
+  },
+  {
+    "name": "Cosmology Caputo HeII ",
+    "path": "limit_data/dark_photon/Cosmology_Caputo_HeII_.txt",
+    "category": "single"
+  },
+  {
+    "name": "Cosmology Witte homogeneous",
+    "path": "limit_data/dark_photon/Cosmology_Witte_homogeneous.txt",
+    "category": "single"
+  },
+  {
+    "name": "Cosmology Witte inhomogeneous",
+    "path": "limit_data/dark_photon/Cosmology_Witte_inhomogeneous.txt",
+    "category": "single"
+  },
+  {
+    "name": "Crab",
+    "path": "limit_data/dark_photon/Crab.txt",
+    "category": "single"
+  },
+  {
+    "name": "Crab 2",
+    "path": "limit_data/dark_photon/Crab_2.txt",
+    "category": "single"
+  },
+  {
+    "name": "CROWS",
+    "path": "limit_data/dark_photon/CROWS.txt",
+    "category": "single"
+  },
+  {
+    "name": "DAMIC",
+    "path": "limit_data/dark_photon/DAMIC.txt",
+    "category": "single"
+  },
+  {
+    "name": "DarkEfield",
+    "path": "limit_data/dark_photon/DarkEfield.txt",
+    "category": "single"
+  },
+  {
+    "name": "DarkEfield2",
+    "path": "limit_data/dark_photon/DarkEfield2.txt",
+    "category": "single"
+  },
+  {
+    "name": "DarkSide",
+    "path": "limit_data/dark_photon/DarkSide.txt",
+    "category": "single"
+  },
+  {
+    "name": "DarkSRF",
+    "path": "limit_data/dark_photon/DarkSRF.txt",
+    "category": "single"
+  },
+  {
+    "name": "DM-Pathfinder",
+    "path": "limit_data/dark_photon/DM-Pathfinder.txt",
+    "category": "single"
+  },
+  {
+    "name": "DOSUE-RR",
+    "path": "limit_data/dark_photon/DOSUE-RR.txt",
+    "category": "single"
+  },
+  {
+    "name": "DOSUE-RR-2",
+    "path": "limit_data/dark_photon/DOSUE-RR-2.txt",
+    "category": "single"
+  },
+  {
+    "name": "Earth",
+    "path": "limit_data/dark_photon/Earth.txt",
+    "category": "single"
+  },
+  {
+    "name": "FAST",
+    "path": "limit_data/dark_photon/FAST.txt",
+    "category": "single"
+  },
+  {
+    "name": "FIRAS",
+    "path": "limit_data/dark_photon/FIRAS.txt",
+    "category": "single"
+  },
+  {
+    "name": "FIRAS homo",
+    "path": "limit_data/dark_photon/FIRAS_homo.txt",
+    "category": "single"
+  },
+  {
+    "name": "FUNK",
+    "path": "limit_data/dark_photon/FUNK.txt",
+    "category": "single"
+  },
+  {
+    "name": "GasClouds",
+    "path": "limit_data/dark_photon/GasClouds.txt",
+    "category": "single"
+  },
+  {
+    "name": "GigaBREAD",
+    "path": "limit_data/dark_photon/GigaBREAD.txt",
+    "category": "single"
+  },
+  {
+    "name": "GlobularClusters",
+    "path": "limit_data/dark_photon/GlobularClusters.txt",
+    "category": "single"
+  },
+  {
+    "name": "HB",
+    "path": "limit_data/dark_photon/HB.txt",
+    "category": "single"
+  },
+  {
+    "name": "Hefei",
+    "path": "limit_data/dark_photon/Hefei.txt",
+    "category": "single"
+  },
+  {
+    "name": "HINODE",
+    "path": "limit_data/dark_photon/HINODE.txt",
+    "category": "single"
+  },
+  {
+    "name": "INTEGRAL",
+    "path": "limit_data/dark_photon/INTEGRAL.txt",
+    "category": "single"
+  },
+  {
+    "name": "ISM",
+    "path": "limit_data/dark_photon/ISM.txt",
+    "category": "single"
+  },
+  {
+    "name": "Jupiter",
+    "path": "limit_data/dark_photon/Jupiter.txt",
+    "category": "single"
+  },
+  {
+    "name": "JWST",
+    "path": "limit_data/dark_photon/JWST.txt",
+    "category": "single"
+  },
+  {
+    "name": "Karshenboim",
+    "path": "limit_data/dark_photon/Karshenboim.txt",
+    "category": "single"
+  },
+  {
+    "name": "LAMPOST",
+    "path": "limit_data/dark_photon/LAMPOST.txt",
+    "category": "single"
+  },
+  {
+    "name": "LeoT",
+    "path": "limit_data/dark_photon/LeoT.txt",
+    "category": "single"
+  },
+  {
+    "name": "LOFAR",
+    "path": "limit_data/dark_photon/LOFAR.txt",
+    "category": "single"
+  },
+  {
+    "name": "LSW ADMX",
+    "path": "limit_data/dark_photon/LSW_ADMX.txt",
+    "category": "single"
+  },
+  {
+    "name": "LSW CERN",
+    "path": "limit_data/dark_photon/LSW_CERN.txt",
+    "category": "single"
+  },
+  {
+    "name": "LSW UWA",
+    "path": "limit_data/dark_photon/LSW_UWA.txt",
+    "category": "single"
+  },
+  {
+    "name": "LymanAlpha",
+    "path": "limit_data/dark_photon/LymanAlpha.txt",
+    "category": "single"
+  },
+  {
+    "name": "MADMAX",
+    "path": "limit_data/dark_photon/MADMAX.txt",
+    "category": "single"
+  },
+  {
+    "name": "MuDHI",
+    "path": "limit_data/dark_photon/MuDHI.txt",
+    "category": "single"
+  },
+  {
+    "name": "NeutronStarCooling",
+    "path": "limit_data/dark_photon/NeutronStarCooling.txt",
+    "category": "single"
+  },
+  {
+    "name": "ORPHEUS",
+    "path": "limit_data/dark_photon/ORPHEUS.txt",
+    "category": "single"
+  },
+  {
+    "name": "ParkerSolarProbe",
+    "path": "limit_data/dark_photon/ParkerSolarProbe.txt",
+    "category": "single"
+  },
+  {
+    "name": "Planck unWISE",
+    "path": "limit_data/dark_photon/Planck_unWISE.txt",
+    "category": "single"
+  },
+  {
+    "name": "PlimptonLawton",
+    "path": "limit_data/dark_photon/PlimptonLawton.txt",
+    "category": "single"
+  },
+  {
+    "name": "QUALIPHIDE",
+    "path": "limit_data/dark_photon/QUALIPHIDE.txt",
+    "category": "single"
+  },
+  {
+    "name": "QuantumCyclotron",
+    "path": "limit_data/dark_photon/QuantumCyclotron.txt",
+    "category": "single"
+  },
+  {
+    "name": "RG",
+    "path": "limit_data/dark_photon/RG.txt",
+    "category": "single"
+  },
+  {
+    "name": "Rydberg",
+    "path": "limit_data/dark_photon/Rydberg.txt",
+    "category": "single"
+  },
+  {
+    "name": "SENSEI",
+    "path": "limit_data/dark_photon/SENSEI.txt",
+    "category": "single"
+  },
+  {
+    "name": "SHANHE",
+    "path": "limit_data/dark_photon/SHANHE.txt",
+    "category": "single"
+  },
+  {
+    "name": "SHIPS",
+    "path": "limit_data/dark_photon/SHIPS.txt",
+    "category": "single"
+  },
+  {
+    "name": "SHUKET",
+    "path": "limit_data/dark_photon/SHUKET.txt",
+    "category": "single"
+  },
+  {
+    "name": "SNIPE",
+    "path": "limit_data/dark_photon/SNIPE.txt",
+    "category": "single"
+  },
+  {
+    "name": "Solar",
+    "path": "limit_data/dark_photon/Solar.txt",
+    "category": "single"
+  },
+  {
+    "name": "Solar-Global",
+    "path": "limit_data/dark_photon/Solar-Global.txt",
+    "category": "single"
+  },
+  {
+    "name": "Spectroscopy",
+    "path": "limit_data/dark_photon/Spectroscopy.txt",
+    "category": "single"
+  },
+  {
+    "name": "SPring-8",
+    "path": "limit_data/dark_photon/SPring-8.txt",
+    "category": "single"
+  },
+  {
+    "name": "SQMS",
+    "path": "limit_data/dark_photon/SQMS.txt",
+    "category": "single"
+  },
+  {
+    "name": "SQuAD",
+    "path": "limit_data/dark_photon/SQuAD.txt",
+    "category": "single"
+  },
+  {
+    "name": "SUPAX",
+    "path": "limit_data/dark_photon/SUPAX.txt",
+    "category": "single"
+  },
+  {
+    "name": "SuperCDMS",
+    "path": "limit_data/dark_photon/SuperCDMS.txt",
+    "category": "single"
+  },
+  {
+    "name": "SuperMAG",
+    "path": "limit_data/dark_photon/SuperMAG.txt",
+    "category": "single"
+  },
+  {
+    "name": "SuperMAG2",
+    "path": "limit_data/dark_photon/SuperMAG2.txt",
+    "category": "single"
+  },
+  {
+    "name": "TEXONO",
+    "path": "limit_data/dark_photon/TEXONO.txt",
+    "category": "single"
+  },
+  {
+    "name": "Tokyo-Dish",
+    "path": "limit_data/dark_photon/Tokyo-Dish.txt",
+    "category": "single"
+  },
+  {
+    "name": "Tokyo-Knirck",
+    "path": "limit_data/dark_photon/Tokyo-Knirck.txt",
+    "category": "single"
+  },
+  {
+    "name": "Tokyo-Tomita",
+    "path": "limit_data/dark_photon/Tokyo-Tomita.txt",
+    "category": "single"
+  },
+  {
+    "name": "WISPDMX",
+    "path": "limit_data/dark_photon/WISPDMX.txt",
+    "category": "single"
+  },
+  {
+    "name": "WISPDMX temp",
+    "path": "limit_data/dark_photon/WISPDMX_temp.txt",
+    "category": "single"
+  },
+  {
+    "name": "WSi Nanowire",
+    "path": "limit_data/dark_photon/WSi_Nanowire.txt",
+    "category": "single"
+  },
+  {
+    "name": "Xenon100",
+    "path": "limit_data/dark_photon/Xenon100.txt",
+    "category": "single"
+  },
+  {
+    "name": "Xenon1T",
+    "path": "limit_data/dark_photon/Xenon1T.txt",
+    "category": "single"
+  },
+  {
+    "name": "Xenon1T S1S2",
+    "path": "limit_data/dark_photon/Xenon1T_S1S2.txt",
+    "category": "single"
+  },
+  {
+    "name": "XENON1T SE",
+    "path": "limit_data/dark_photon/XENON1T_SE.txt",
+    "category": "single"
+  },
+  {
+    "name": "XENON1T Solar S2",
+    "path": "limit_data/dark_photon/XENON1T_Solar_S2.txt",
+    "category": "single"
+  },
+  {
+    "name": "XENON1T Solar SE",
+    "path": "limit_data/dark_photon/XENON1T_Solar_SE.txt",
+    "category": "single"
+  },
+  {
+    "name": "XENONnT",
+    "path": "limit_data/dark_photon/XENONnT.txt",
+    "category": "single"
+  }
+]

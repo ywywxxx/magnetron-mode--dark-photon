@@ -219,6 +219,42 @@
       background: #fff;
     }
 
+    .limit-list {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 6px;
+      max-height: 96px;
+      overflow: auto;
+      padding-top: 10px;
+    }
+
+    .limit-chip {
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      max-width: 220px;
+      padding: 4px 7px;
+      border: 1px solid var(--line);
+      border-radius: 6px;
+      background: #fff;
+      color: var(--muted);
+      font-size: 12px;
+      white-space: nowrap;
+    }
+
+    .limit-swatch {
+      width: 12px;
+      height: 3px;
+      flex: 0 0 auto;
+      border-radius: 999px;
+    }
+
+    .limit-chip span:last-child {
+      min-width: 0;
+      overflow: hidden;
+      text-overflow: ellipsis;
+    }
+
     @media (max-width: 880px) {
       main {
         grid-template-columns: 1fr;
@@ -362,6 +398,7 @@
         <div class="chart-wrap">
           <canvas id="massPlot" width="900" height="420" aria-label="epsilon_min versus omega_m"></canvas>
         </div>
+        <div class="limit-list" id="limitList" aria-label="Loaded limit datasets"></div>
       </section>
 
       <section>
@@ -468,14 +505,12 @@
       tObs: control("tObs", U.sec, "sec")
     };
 
-    const existingLimitFiles = [
-      { name: "DM searches", path: "limit_data/dark_photon/DP_Combined_DarkMatterSearches.txt", color: "#111827" },
-      { name: "Laboratory", path: "limit_data/dark_photon/DP_Combined_Laboratory.txt", color: "#a16207" },
-      { name: "Leo T", path: "limit_data/dark_photon/LeoT.txt", color: "#f59e0b" },
-      { name: "Axion searches", path: "limit_data/dark_photon/DP_Combined_AxionSearchesRescaled.txt", color: "#7c3aed" }
-    ];
-
+    let existingLimitFiles = [];
     let existingLimitData = [];
+
+    const fallbackLimitFiles = [
+      { name: "Leo T", path: "limit_data/dark_photon/LeoT.txt", category: "single" }
+    ];
 
     function control(id, unit, unitName) {
       return {
@@ -522,7 +557,50 @@
       document.getElementById(id).textContent = text;
     }
 
+    function limitColor(index) {
+      return `hsl(${(index * 137.508) % 360}, 67%, 39%)`;
+    }
+
+    async function loadLimitManifest() {
+      try {
+        const response = await fetch("limit_data/dark_photon/manifest.json");
+        if (!response.ok) throw new Error("manifest unavailable");
+        const manifest = await response.json();
+        return manifest
+          .filter(file => file && file.name && file.path && file.enabled !== false)
+          .map((file, index) => ({
+            ...file,
+            color: file.color || limitColor(index)
+          }));
+      } catch (_) {
+        return fallbackLimitFiles.map((file, index) => ({
+          ...file,
+          color: file.color || limitColor(index)
+        }));
+      }
+    }
+
+    function renderLimitList() {
+      const list = document.getElementById("limitList");
+      if (!list) return;
+      list.textContent = "";
+      for (const limit of existingLimitData) {
+        if (limit.points.length <= 1) continue;
+        const chip = document.createElement("div");
+        chip.className = "limit-chip";
+        chip.title = `${limit.name}: ${limit.path}`;
+        const swatch = document.createElement("span");
+        swatch.className = "limit-swatch";
+        swatch.style.background = limit.color;
+        const name = document.createElement("span");
+        name.textContent = limit.name;
+        chip.append(swatch, name);
+        list.appendChild(chip);
+      }
+    }
+
     async function loadExistingLimits() {
+      existingLimitFiles = await loadLimitManifest();
       const loaded = [];
       for (const file of existingLimitFiles) {
         try {
@@ -544,6 +622,7 @@
         }
       }
       existingLimitData = loaded;
+      renderLimitList();
       calculateAndRender();
     }
 
@@ -990,18 +1069,16 @@
       ctx.textBaseline = "middle";
       const legendX = pad.left + 12;
       let legendY = pad.top + 16;
-      for (const file of existingLimitFiles) {
-        if (!existingLimitData.some(limit => limit.name === file.name && limit.points.length > 1)) {
-          continue;
-        }
-        ctx.strokeStyle = file.color;
+      const visibleLimitCount = existingLimitData.filter(limit => limit.points.length > 1).length;
+      if (visibleLimitCount > 0) {
+        ctx.strokeStyle = "#64748b";
         ctx.lineWidth = 2;
         ctx.beginPath();
         ctx.moveTo(legendX, legendY);
         ctx.lineTo(legendX + 28, legendY);
         ctx.stroke();
         ctx.fillStyle = "#1f2933";
-        ctx.fillText(file.name, legendX + 36, legendY);
+        ctx.fillText(`${visibleLimitCount} individual limits`, legendX + 36, legendY);
         legendY += 20;
       }
       ctx.strokeStyle = "#176b5d";

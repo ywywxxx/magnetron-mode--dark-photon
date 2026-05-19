@@ -65,16 +65,22 @@ The slider UI lets you tune `omega_m`, `omega_c`, `omega_z`, `R`, `R_trap`,
 `t_ave`, and `t_obs`. It shows the current point and the mass-scan curve in the
 `omega_m`-`epsilon_min` plane.
 
-Existing dark photon limit curves are loaded from combined data files based on
+Existing dark photon limit curves are loaded as individual data files based on
 the AxionLimits `DarkPhoton.ipynb` notebook:
 
 ```text
 https://github.com/cajohare/AxionLimits/blob/master/DarkPhoton.ipynb
 ```
 
-Plasma-resonance based combined bounds are intentionally omitted from the
-overlay. The current comparison curves only use the direct dark matter search,
-laboratory, Leo T, and axion-search-rescaled data files.
+The webpage reads the enabled overlay list from:
+
+```text
+limit_data/dark_photon/manifest.json
+```
+
+No `DP_Combined_*` or `DM_combined` files are used. To remove or restore a
+specific external limit, edit that manifest entry instead of changing the
+physics calculator.
 
 ## Check the relation table
 
