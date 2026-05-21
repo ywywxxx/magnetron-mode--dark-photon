@@ -115,6 +115,12 @@ add_relation(
 )
 
 add_relation(
+    name="snr_threshold",
+    expression="5",
+    note="Default detection threshold in units of sigma_noise; adjustable from 3 to 10 in the slider UI.",
+)
+
+add_relation(
     name="R_trap_max",
     expression="10 * cm",
     note="Upper adjustable bound for R_trap.",
@@ -258,9 +264,9 @@ add_relation(
 
 add_relation(
     name="thr",
-    expression="5 * sigma_noise",
-    depends_on=("sigma_noise",),
-    note="Detection threshold set to 5 times the noise scale.",
+    expression="snr_threshold * sigma_noise",
+    depends_on=("snr_threshold", "sigma_noise"),
+    note="Detection threshold set by the adjustable SNR threshold.",
 )
 
 add_relation(

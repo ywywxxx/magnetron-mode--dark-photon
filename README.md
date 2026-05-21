@@ -62,8 +62,8 @@ http://localhost:8000/sensitivity_slider.html
 ```
 
 The slider UI lets you tune `omega_m`, `omega_c`, `omega_z`, `R`, `R_trap`,
-`t_ave`, and `t_obs`. It shows the current point and the mass-scan curve in the
-`omega_m`-`epsilon_min` plane.
+`t_ave`, `t_obs`, and the SNR threshold. It shows the current point and the
+mass-scan curve in the `omega_m`-`epsilon_min` plane.
 
 Existing dark photon limit curves are loaded as individual data files based on
 the AxionLimits `DarkPhoton.ipynb` notebook:

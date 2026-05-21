@@ -115,6 +115,7 @@ class State:
     omega_z: float
     t_ave: float
     t_obs: float
+    snr_threshold: float = 5.0
 
     @classmethod
     def from_omega_m_and_omega_c(
@@ -124,12 +125,20 @@ class State:
         t_ave: float,
         t_obs: float,
         ranges: Ranges,
+        snr_threshold: float = 5.0,
     ) -> "State":
         ranges.check_omega_m(omega_m)
         ranges.check_omega_c(omega_c)
         omega_z = sqrt(2.0 * omega_c * omega_m)
         ranges.check_omega_z(omega_z)
-        return cls(omega_m=omega_m, omega_c=omega_c, omega_z=omega_z, t_ave=t_ave, t_obs=t_obs)
+        return cls(
+            omega_m=omega_m,
+            omega_c=omega_c,
+            omega_z=omega_z,
+            t_ave=t_ave,
+            t_obs=t_obs,
+            snr_threshold=snr_threshold,
+        )
 
     @classmethod
     def from_omega_m_and_omega_z(
@@ -139,12 +148,20 @@ class State:
         t_ave: float,
         t_obs: float,
         ranges: Ranges,
+        snr_threshold: float = 5.0,
     ) -> "State":
         ranges.check_omega_m(omega_m)
         ranges.check_omega_z(omega_z)
         omega_c = omega_z**2 / (2.0 * omega_m)
         ranges.check_omega_c(omega_c)
-        return cls(omega_m=omega_m, omega_c=omega_c, omega_z=omega_z, t_ave=t_ave, t_obs=t_obs)
+        return cls(
+            omega_m=omega_m,
+            omega_c=omega_c,
+            omega_z=omega_z,
+            t_ave=t_ave,
+            t_obs=t_obs,
+            snr_threshold=snr_threshold,
+        )
 
     def with_omega_m(self, omega_m: float, ranges: Ranges) -> "State":
         """Change omega_m while holding omega_c fixed and adapting omega_z."""
@@ -154,6 +171,7 @@ class State:
             t_ave=self.t_ave,
             t_obs=self.t_obs,
             ranges=ranges,
+            snr_threshold=self.snr_threshold,
         )
 
     def with_omega_c(self, omega_c: float, ranges: Ranges) -> "State":
@@ -164,6 +182,7 @@ class State:
             t_ave=self.t_ave,
             t_obs=self.t_obs,
             ranges=ranges,
+            snr_threshold=self.snr_threshold,
         )
 
     def with_omega_z(self, omega_z: float, ranges: Ranges) -> "State":
@@ -174,13 +193,17 @@ class State:
             t_ave=self.t_ave,
             t_obs=self.t_obs,
             ranges=ranges,
+            snr_threshold=self.snr_threshold,
         )
 
     def with_t_ave(self, t_ave: float) -> "State":
-        return State(self.omega_m, self.omega_c, self.omega_z, t_ave, self.t_obs)
+        return State(self.omega_m, self.omega_c, self.omega_z, t_ave, self.t_obs, self.snr_threshold)
 
     def with_t_obs(self, t_obs: float) -> "State":
-        return State(self.omega_m, self.omega_c, self.omega_z, self.t_ave, t_obs)
+        return State(self.omega_m, self.omega_c, self.omega_z, self.t_ave, t_obs, self.snr_threshold)
+
+    def with_snr_threshold(self, snr_threshold: float) -> "State":
+        return State(self.omega_m, self.omega_c, self.omega_z, self.t_ave, self.t_obs, snr_threshold)
 
 
 @dataclass(frozen=True)
@@ -201,6 +224,7 @@ class Result:
     omega_z: float
     t_ave: float
     t_obs: float
+    snr_threshold: float
 
 
 def calculate_min_epsilon(state: State) -> Result:
@@ -218,7 +242,7 @@ def calculate_min_epsilon(state: State) -> Result:
     n_e = 1.0
 
     sigma_noise = 0.03 * U["Hz"] / sqrt(state.t_ave / U["sec"])
-    threshold = 5.0 * sigma_noise
+    threshold = state.snr_threshold * sigma_noise
 
     delta_c = 2.0 * pi * 57.0 * U["kHz"] * (
         10.0 * U["MHz"] / (state.omega_z / (2.0 * pi))
@@ -258,6 +282,7 @@ def calculate_min_epsilon(state: State) -> Result:
         omega_z=state.omega_z,
         t_ave=state.t_ave,
         t_obs=state.t_obs,
+        snr_threshold=state.snr_threshold,
     )
 
 
@@ -283,6 +308,7 @@ def print_result(result: Result, ranges: Ranges | None = None) -> None:
     print(f"  omega_z = {fmt(result.omega_z, 'eV')}")
     print(f"  t_ave   = {fmt(result.t_ave, 'sec')}")
     print(f"  t_obs   = {fmt(result.t_obs, 'sec')}")
+    print(f"  SNR threshold = {result.snr_threshold:.6g}")
     if ranges is not None:
         omega_c_min, omega_c_max = ranges.omega_c_range_for_omega_m(result.omega_m)
         omega_z_min, omega_z_max = ranges.omega_z_range_for_omega_m(result.omega_m)
@@ -313,16 +339,20 @@ def make_initial_state(args: argparse.Namespace, ranges: Ranges) -> State:
 
     if args.omega_z is not None:
         omega_z = unit_value(args.omega_z, args.omega_z_unit)
-        return State.from_omega_m_and_omega_z(omega_m, omega_z, t_ave, t_obs, ranges)
+        return State.from_omega_m_and_omega_z(
+            omega_m, omega_z, t_ave, t_obs, ranges, args.snr_threshold
+        )
 
     omega_c = unit_value(args.omega_c, args.omega_c_unit)
-    return State.from_omega_m_and_omega_c(omega_m, omega_c, t_ave, t_obs, ranges)
+    return State.from_omega_m_and_omega_c(
+        omega_m, omega_c, t_ave, t_obs, ranges, args.snr_threshold
+    )
 
 
 def interactive_loop(state: State, ranges: Ranges) -> None:
     print_ranges(ranges)
     print("")
-    print("Commands: show, ranges, wm VALUE UNIT, wc VALUE UNIT, wz VALUE UNIT, tave VALUE UNIT, tobs VALUE UNIT, quit")
+    print("Commands: show, ranges, wm VALUE UNIT, wc VALUE UNIT, wz VALUE UNIT, tave VALUE UNIT, tobs VALUE UNIT, snr VALUE, quit")
     while True:
         try:
             line = input("> ").strip()
@@ -342,17 +372,19 @@ def interactive_loop(state: State, ranges: Ranges) -> None:
             continue
 
         parts = line.split()
-        if len(parts) != 3:
-            print("Expected: command VALUE UNIT")
+        if len(parts) not in {2, 3}:
+            print("Expected: command VALUE UNIT, or snr VALUE")
             continue
 
-        command, raw_value, unit_name = parts
-        if unit_name not in U:
+        command = parts[0]
+        raw_value = parts[1]
+        unit_name = parts[2] if len(parts) == 3 else ""
+        if command != "snr" and unit_name not in U:
             print(f"Unknown unit: {unit_name}")
             continue
 
         try:
-            value = unit_value(float(raw_value), unit_name)
+            value = float(raw_value) if command == "snr" else unit_value(float(raw_value), unit_name)
             if command == "wm":
                 state = state.with_omega_m(value, ranges)
             elif command == "wc":
@@ -363,6 +395,8 @@ def interactive_loop(state: State, ranges: Ranges) -> None:
                 state = state.with_t_ave(value)
             elif command == "tobs":
                 state = state.with_t_obs(value)
+            elif command == "snr":
+                state = state.with_snr_threshold(value)
             else:
                 print(f"Unknown command: {command}")
                 continue
@@ -383,6 +417,7 @@ def parse_args() -> argparse.Namespace:
     parser.add_argument("--t-ave-unit", default="sec", choices=sorted(U), help="unit for t_ave")
     parser.add_argument("--t-obs", type=float, default=6.0, help="total observation time")
     parser.add_argument("--t-obs-unit", default="sec", choices=sorted(U), help="unit for t_obs")
+    parser.add_argument("--snr-threshold", type=float, default=5.0, help="detection threshold in sigma_noise units")
     parser.add_argument("--interactive", action="store_true", help="start an interactive adjustment prompt")
     return parser.parse_args()
 

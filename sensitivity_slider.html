@@ -429,6 +429,18 @@
           <div class="unit">sec</div>
         </div>
       </div>
+
+      <div class="control" data-control="snrThreshold">
+        <div class="label-row">
+          <label for="snrThresholdRange">SNR threshold</label>
+          <span class="range-text" id="snrThresholdRangeText"></span>
+        </div>
+        <input id="snrThresholdRange" type="range" min="0" max="1000" step="1">
+        <div class="input-row">
+          <input id="snrThresholdInput" type="number" step="any">
+          <div class="unit">sigma</div>
+        </div>
+      </div>
     </section>
 
     <div class="results">
@@ -481,6 +493,7 @@
             <div class="row"><span>T_wall</span><span id="outWallTemp"></span></div>
             <div class="row"><span>t_ave</span><span id="outTAve"></span></div>
             <div class="row"><span>t_obs</span><span id="outTObs"></span></div>
+            <div class="row"><span>SNR threshold</span><span id="outSNRThreshold"></span></div>
           </div>
           <div>
             <div class="row"><span>sigma_noise</span><span id="outSigmaNoise"></span></div>
@@ -543,7 +556,9 @@
       wallTempMin: 1e-3 * U.K,
       wallTempMax: 1 * U.K,
       tObsMin: 1e-6 * U.sec,
-      tObsMax: U.year
+      tObsMax: U.year,
+      snrThresholdMin: 3,
+      snrThresholdMax: 10
     };
     ranges.omegaMMin = ranges.omegaZMin ** 2 / (2 * ranges.omegaCMax);
     ranges.omegaMMax = ranges.omegaZMax ** 2 / (2 * ranges.omegaCMin);
@@ -556,7 +571,8 @@
       trapRadius: 0.3 * U.mm,
       wallTemp: 0.01 * U.K,
       tObs: 6 * U.sec,
-      tAve: 2 * U.sec
+      tAve: 2 * U.sec,
+      snrThreshold: 5
     };
 
     let activeTune = "omegaC";
@@ -571,7 +587,8 @@
       trapRadius: control("trapRadius", U.mm, "mm"),
       wallTemp: control("wallTemp", U.K, "K"),
       tAve: control("tAve", U.sec, "sec"),
-      tObs: control("tObs", U.sec, "sec")
+      tObs: control("tObs", U.sec, "sec"),
+      snrThreshold: control("snrThreshold", 1, "sigma")
     };
 
     let existingLimitFiles = [];
@@ -757,11 +774,13 @@
       setBounds("wallTemp", ranges.wallTempMin, ranges.wallTempMax);
       setBounds("tObs", ranges.tObsMin, ranges.tObsMax);
       setBounds("tAve", state.tObs / 1e9, state.tObs);
+      setBounds("snrThreshold", ranges.snrThresholdMin, ranges.snrThresholdMax);
 
       state.omegaC = clamp(state.omegaC, omegaCMin, omegaCMax);
       state.omegaZ = clamp(state.omegaZ, omegaZMin, omegaZMax);
       state.trapRadius = clamp(state.trapRadius, controls.trapRadius.min, controls.trapRadius.max);
       state.tAve = clamp(state.tAve, controls.tAve.min, controls.tAve.max);
+      state.snrThreshold = clamp(state.snrThreshold, ranges.snrThresholdMin, ranges.snrThresholdMax);
       if (activeTune === "omegaC") {
         state.omegaZ = Math.sqrt(2 * state.omegaC * state.omegaM);
       } else {
@@ -789,6 +808,7 @@
       syncControl("wallTemp", state.wallTemp);
       syncControl("tAve", state.tAve);
       syncControl("tObs", state.tObs);
+      syncControl("snrThreshold", state.snrThreshold);
       suppress = false;
       calculateAndRender();
     }
@@ -857,7 +877,7 @@
       const nE = 1;
 
       const sigmaNoise = 0.03 * U.Hz / Math.sqrt(point.tAve / U.sec);
-      const threshold = 5 * sigmaNoise;
+      const threshold = point.snrThreshold * sigmaNoise;
       const deltaC = 2 * Math.PI * 57 * U.kHz * (10 * U.MHz / (point.omegaZ / (2 * Math.PI)));
       const deltaM = deltaC * point.omegaM / point.omegaC;
       const deltaDM = point.omegaM * 1e-6;
@@ -933,7 +953,8 @@
         trapRadius: state.trapRadius,
         wallTemp: state.wallTemp,
         tAve: state.tAve,
-        tObs: state.tObs
+        tObs: state.tObs,
+        snrThreshold: state.snrThreshold
       };
     }
 
@@ -1250,6 +1271,7 @@
       setNumber("outWallTemp", `${format(state.wallTemp, U.K)} K`);
       setNumber("outTAve", `${format(state.tAve, U.sec)} sec`);
       setNumber("outTObs", `${format(state.tObs, U.sec)} sec`);
+      setNumber("outSNRThreshold", state.snrThreshold.toPrecision(4));
       setNumber("outOmegaMRange", `${format(ranges.omegaMMin, U.neV)} - ${format(ranges.omegaMMax, U.neV)} neV`);
       setNumber("outOmegaCRange", `${format(controls.omegaC.min, U.meV)} - ${format(controls.omegaC.max, U.meV)} meV`);
       setNumber("outOmegaZRange", `${format(controls.omegaZ.min, U.eV)} - ${format(controls.omegaZ.max, U.eV)} eV`);
@@ -1319,6 +1341,8 @@
         if (!tAveManuallySet) {
           state.tAve = state.tObs / 3;
         }
+      } else if (name === "snrThreshold") {
+        state.snrThreshold = clamp(value, ranges.snrThresholdMin, ranges.snrThresholdMax);
       }
       syncUI();
     }
