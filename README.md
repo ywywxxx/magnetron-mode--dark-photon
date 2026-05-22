@@ -83,6 +83,19 @@ No `DP_Combined_*` or `DM_combined` files are used. To remove or restore a
 specific external limit, edit that manifest entry instead of changing the
 physics calculator.
 
+Existing axion-photon limit curves are loaded as individual data files based on
+the AxionLimits `AxionPhoton.ipynb` notebook:
+
+```text
+https://github.com/cajohare/AxionLimits/blob/master/AxionPhoton.ipynb
+```
+
+The axion overlay list is stored in:
+
+```text
+limit_data/axion_photon/manifest.json
+```
+
 ## Check the relation table
 
 ```bash

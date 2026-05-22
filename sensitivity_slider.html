@@ -498,6 +498,16 @@
         <div class="chart-wrap">
           <canvas id="axionPlot" width="640" height="640" aria-label="g_min versus omega_m"></canvas>
         </div>
+        <div class="limit-panel" aria-label="Axion limit dataset controls">
+          <div class="limit-toolbar">
+            <div class="limit-actions">
+              <button class="limit-action" type="button" id="showAllAxionLimits">Show all</button>
+              <button class="limit-action" type="button" id="hideAllAxionLimits">Hide all</button>
+            </div>
+            <div class="limit-count" id="axionLimitCount"></div>
+          </div>
+          <div class="limit-list" id="axionLimitList" aria-label="Loaded axion limit datasets"></div>
+        </div>
       </section>
 
       <section>
@@ -620,10 +630,16 @@
 
     let existingLimitFiles = [];
     let existingLimitData = [];
+    let axionLimitFiles = [];
+    let axionLimitData = [];
     const LIMIT_VISIBILITY_KEY = "magnetronDarkPhotonHiddenLimits";
+    const AXION_LIMIT_VISIBILITY_KEY = "magnetronAxionPhotonHiddenLimits";
 
     const fallbackLimitFiles = [
       { name: "Leo T", path: "limit_data/dark_photon/LeoT.txt", category: "single" }
+    ];
+    const fallbackAxionLimitFiles = [
+      { name: "CAST", path: "limit_data/axion_photon/CAST.txt", category: "single" }
     ];
 
     function getHiddenLimitPaths() {
@@ -635,6 +651,16 @@
     }
 
     let hiddenLimitPaths = getHiddenLimitPaths();
+
+    function getHiddenAxionLimitPaths() {
+      try {
+        return new Set(JSON.parse(localStorage.getItem(AXION_LIMIT_VISIBILITY_KEY) || "[]"));
+      } catch (_) {
+        return new Set();
+      }
+    }
+
+    let hiddenAxionLimitPaths = getHiddenAxionLimitPaths();
 
     function control(id, unit, unitName) {
       return {
@@ -693,11 +719,28 @@
       }
     }
 
+    function saveAxionLimitVisibility() {
+      try {
+        localStorage.setItem(AXION_LIMIT_VISIBILITY_KEY, JSON.stringify([...hiddenAxionLimitPaths]));
+      } catch (_) {
+        // The buttons still work for the current page even if storage is unavailable.
+      }
+    }
+
     function setLimitVisibility(limit, visible) {
       if (visible) {
         hiddenLimitPaths.delete(limit.path);
       } else {
         hiddenLimitPaths.add(limit.path);
+      }
+      limit.visible = visible;
+    }
+
+    function setAxionLimitVisibility(limit, visible) {
+      if (visible) {
+        hiddenAxionLimitPaths.delete(limit.path);
+      } else {
+        hiddenAxionLimitPaths.add(limit.path);
       }
       limit.visible = visible;
     }
@@ -717,6 +760,25 @@
         return fallbackLimitFiles.map((file, index) => ({
           ...file,
           color: file.color || limitColor(index)
+        }));
+      }
+    }
+
+    async function loadAxionLimitManifest() {
+      try {
+        const response = await fetch("limit_data/axion_photon/manifest.json");
+        if (!response.ok) throw new Error("axion manifest unavailable");
+        const manifest = await response.json();
+        return manifest
+          .filter(file => file && file.name && file.path && file.enabled !== false)
+          .map((file, index) => ({
+            ...file,
+            color: file.color || limitColor(index + 41)
+          }));
+      } catch (_) {
+        return fallbackAxionLimitFiles.map((file, index) => ({
+          ...file,
+          color: file.color || limitColor(index + 41)
         }));
       }
     }
@@ -752,12 +814,52 @@
       if (count) count.textContent = `${visibleCount}/${totalCount} visible`;
     }
 
+    function renderAxionLimitList() {
+      const list = document.getElementById("axionLimitList");
+      if (!list) return;
+      list.textContent = "";
+      for (const limit of axionLimitData) {
+        if (limit.points.length <= 1) continue;
+        const chip = document.createElement("button");
+        chip.className = `limit-chip${limit.visible ? "" : " off"}`;
+        chip.type = "button";
+        chip.title = `${limit.name}: ${limit.path}`;
+        chip.setAttribute("aria-pressed", limit.visible ? "true" : "false");
+        const swatch = document.createElement("span");
+        swatch.className = "limit-swatch";
+        swatch.style.background = limit.color;
+        const name = document.createElement("span");
+        name.textContent = limit.name;
+        chip.append(swatch, name);
+        chip.addEventListener("click", () => {
+          setAxionLimitVisibility(limit, !limit.visible);
+          saveAxionLimitVisibility();
+          renderAxionLimitList();
+          calculateAndRender();
+        });
+        list.appendChild(chip);
+      }
+      const visibleCount = axionLimitData.filter(limit => limit.visible && limit.points.length > 1).length;
+      const totalCount = axionLimitData.filter(limit => limit.points.length > 1).length;
+      const count = document.getElementById("axionLimitCount");
+      if (count) count.textContent = `${visibleCount}/${totalCount} visible`;
+    }
+
     function setVisibleLimits(predicate) {
       for (const limit of existingLimitData) {
         setLimitVisibility(limit, predicate(limit));
       }
       saveLimitVisibility();
       renderLimitList();
+      calculateAndRender();
+    }
+
+    function setVisibleAxionLimits(predicate) {
+      for (const limit of axionLimitData) {
+        setAxionLimitVisibility(limit, predicate(limit));
+      }
+      saveAxionLimitVisibility();
+      renderAxionLimitList();
       calculateAndRender();
     }
 
@@ -785,6 +887,33 @@
       }
       existingLimitData = loaded;
       renderLimitList();
+      calculateAndRender();
+    }
+
+    async function loadAxionLimits() {
+      axionLimitFiles = await loadAxionLimitManifest();
+      const loaded = [];
+      for (const file of axionLimitFiles) {
+        try {
+          const response = await fetch(file.path);
+          if (!response.ok) continue;
+          const text = await response.text();
+          const points = text
+            .trim()
+            .split(/\n+/)
+            .map(line => line.trim().split(/\s+/).map(Number))
+            .filter(row => row.length >= 2 && Number.isFinite(row[0]) && Number.isFinite(row[1]) && row[0] > 0 && row[1] > 0)
+            .map(row => ({
+              massNeV: row[0] * U.eV / U.neV,
+              g: row[1]
+            }));
+          loaded.push({ ...file, visible: !hiddenAxionLimitPaths.has(file.path), points });
+        } catch (_) {
+          // Keep the UI usable if a local data file is unavailable.
+        }
+      }
+      axionLimitData = loaded;
+      renderAxionLimitList();
       calculateAndRender();
     }
 
@@ -1392,6 +1521,13 @@
       const yValues = points
         .flatMap(p => [p.g, p.gFullAve])
         .filter(y => Number.isFinite(y) && y > 0);
+      for (const limit of axionLimitData.filter(limit => limit.visible)) {
+        for (const p of limit.points) {
+          if (p.massNeV >= xMin && p.massNeV <= xMax && p.g > 0 && p.g < 1) {
+            yValues.push(p.g);
+          }
+        }
+      }
       let yMin = Math.min(...yValues);
       let yMax = Math.max(...yValues);
       yMin = 10 ** Math.floor(Math.log10(yMin) - 0.25);
@@ -1449,6 +1585,31 @@
         ctx.closePath();
         ctx.fill();
       }
+
+      ctx.lineWidth = 1.4;
+      ctx.setLineDash([]);
+      for (const limit of axionLimitData.filter(limit => limit.visible)) {
+        ctx.strokeStyle = limit.color;
+        ctx.globalAlpha = 0.62;
+        ctx.beginPath();
+        let limitStarted = false;
+        for (const p of limit.points) {
+          if (p.massNeV < xMin || p.massNeV > xMax || p.g <= 0 || p.g >= 1) {
+            limitStarted = false;
+            continue;
+          }
+          const px = xToPx(p.massNeV);
+          const py = yToPx(p.g);
+          if (!limitStarted) {
+            ctx.moveTo(px, py);
+            limitStarted = true;
+          } else {
+            ctx.lineTo(px, py);
+          }
+        }
+        ctx.stroke();
+      }
+      ctx.globalAlpha = 1;
 
       ctx.strokeStyle = "#176b5d";
       ctx.lineWidth = 2;
@@ -1516,6 +1677,18 @@
       ctx.textBaseline = "middle";
       const legendX = pad.left + 12;
       let legendY = pad.top + 16;
+      const visibleLimitCount = axionLimitData.filter(limit => limit.visible && limit.points.length > 1).length;
+      if (visibleLimitCount > 0) {
+        ctx.strokeStyle = "#64748b";
+        ctx.lineWidth = 2;
+        ctx.beginPath();
+        ctx.moveTo(legendX, legendY);
+        ctx.lineTo(legendX + 28, legendY);
+        ctx.stroke();
+        ctx.fillStyle = "#1f2933";
+        ctx.fillText(`${visibleLimitCount} axion limits`, legendX + 36, legendY);
+        legendY += 20;
+      }
       ctx.strokeStyle = "#176b5d";
       ctx.lineWidth = 2;
       ctx.beginPath();
@@ -1663,9 +1836,16 @@
     document.getElementById("showRescaledLimits").addEventListener("click", () => {
       setVisibleLimits(limit => limit.category === "rescaled");
     });
+    document.getElementById("showAllAxionLimits").addEventListener("click", () => {
+      setVisibleAxionLimits(() => true);
+    });
+    document.getElementById("hideAllAxionLimits").addEventListener("click", () => {
+      setVisibleAxionLimits(() => false);
+    });
 
     syncUI();
     loadExistingLimits();
+    loadAxionLimits();
   </script>
 </body>
 </html>

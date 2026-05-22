@@ -1,0 +1,957 @@
+[
+  {
+    "name": "ABRACADABRA",
+    "path": "limit_data/axion_photon/ABRACADABRA.txt",
+    "category": "single"
+  },
+  {
+    "name": "ABRACADABRA run2",
+    "path": "limit_data/axion_photon/ABRACADABRA_run2.txt",
+    "category": "single"
+  },
+  {
+    "name": "ADBC",
+    "path": "limit_data/axion_photon/ADBC.txt",
+    "category": "single"
+  },
+  {
+    "name": "ADMX",
+    "path": "limit_data/axion_photon/ADMX.txt",
+    "category": "single"
+  },
+  {
+    "name": "ADMX Sidecar",
+    "path": "limit_data/axion_photon/ADMX_Sidecar.txt",
+    "category": "single"
+  },
+  {
+    "name": "ADMX Sidecar AC",
+    "path": "limit_data/axion_photon/ADMX_Sidecar_AC.txt",
+    "category": "single"
+  },
+  {
+    "name": "ADMX Sidecar JTWPA",
+    "path": "limit_data/axion_photon/ADMX_Sidecar_JTWPA.txt",
+    "category": "single"
+  },
+  {
+    "name": "ADMX SLIC",
+    "path": "limit_data/axion_photon/ADMX_SLIC.txt",
+    "category": "single"
+  },
+  {
+    "name": "ADMX2018",
+    "path": "limit_data/axion_photon/ADMX2018.txt",
+    "category": "single"
+  },
+  {
+    "name": "ADMX2019 1",
+    "path": "limit_data/axion_photon/ADMX2019_1.txt",
+    "category": "single"
+  },
+  {
+    "name": "ADMX2019 2",
+    "path": "limit_data/axion_photon/ADMX2019_2.txt",
+    "category": "single"
+  },
+  {
+    "name": "ADMX2021",
+    "path": "limit_data/axion_photon/ADMX2021.txt",
+    "category": "single"
+  },
+  {
+    "name": "ADMX2024",
+    "path": "limit_data/axion_photon/ADMX2024.txt",
+    "category": "single"
+  },
+  {
+    "name": "ADMX2025",
+    "path": "limit_data/axion_photon/ADMX2025.txt",
+    "category": "single"
+  },
+  {
+    "name": "ALP CDM",
+    "path": "limit_data/axion_photon/ALP_CDM.txt",
+    "category": "single"
+  },
+  {
+    "name": "ALPS",
+    "path": "limit_data/axion_photon/ALPS.txt",
+    "category": "single"
+  },
+  {
+    "name": "ATLAS PbPb",
+    "path": "limit_data/axion_photon/ATLAS_PbPb.txt",
+    "category": "single"
+  },
+  {
+    "name": "ATLAS pp",
+    "path": "limit_data/axion_photon/ATLAS_pp.txt",
+    "category": "single"
+  },
+  {
+    "name": "Axion CDM",
+    "path": "limit_data/axion_photon/Axion_CDM.txt",
+    "category": "single"
+  },
+  {
+    "name": "AxionStarExplosions-1",
+    "path": "limit_data/axion_photon/AxionStarExplosions-1.txt",
+    "category": "single"
+  },
+  {
+    "name": "AxionStarExplosions-2",
+    "path": "limit_data/axion_photon/AxionStarExplosions-2.txt",
+    "category": "single"
+  },
+  {
+    "name": "BaBar",
+    "path": "limit_data/axion_photon/BaBar.txt",
+    "category": "single"
+  },
+  {
+    "name": "BASE",
+    "path": "limit_data/axion_photon/BASE.txt",
+    "category": "single"
+  },
+  {
+    "name": "BBN",
+    "path": "limit_data/axion_photon/BBN.txt",
+    "category": "single"
+  },
+  {
+    "name": "BBN 10MeV",
+    "path": "limit_data/axion_photon/BBN_10MeV.txt",
+    "category": "single"
+  },
+  {
+    "name": "BBN Neff",
+    "path": "limit_data/axion_photon/BBN_Neff.txt",
+    "category": "single"
+  },
+  {
+    "name": "BeamDump",
+    "path": "limit_data/axion_photon/BeamDump.txt",
+    "category": "single"
+  },
+  {
+    "name": "BelleII",
+    "path": "limit_data/axion_photon/BelleII.txt",
+    "category": "single"
+  },
+  {
+    "name": "BESIII",
+    "path": "limit_data/axion_photon/BESIII.txt",
+    "category": "single"
+  },
+  {
+    "name": "Betelgeuse",
+    "path": "limit_data/axion_photon/Betelgeuse.txt",
+    "category": "single"
+  },
+  {
+    "name": "BICEP-KECK",
+    "path": "limit_data/axion_photon/BICEP-KECK.txt",
+    "category": "single"
+  },
+  {
+    "name": "BreakthroughListen",
+    "path": "limit_data/axion_photon/BreakthroughListen.txt",
+    "category": "single"
+  },
+  {
+    "name": "BulletCluster",
+    "path": "limit_data/axion_photon/BulletCluster.txt",
+    "category": "single"
+  },
+  {
+    "name": "CAPP-1",
+    "path": "limit_data/axion_photon/CAPP-1.txt",
+    "category": "single"
+  },
+  {
+    "name": "CAPP-2",
+    "path": "limit_data/axion_photon/CAPP-2.txt",
+    "category": "single"
+  },
+  {
+    "name": "CAPP-3",
+    "path": "limit_data/axion_photon/CAPP-3.txt",
+    "category": "single"
+  },
+  {
+    "name": "CAPP-4",
+    "path": "limit_data/axion_photon/CAPP-4.txt",
+    "category": "single"
+  },
+  {
+    "name": "CAPP-5",
+    "path": "limit_data/axion_photon/CAPP-5.txt",
+    "category": "single"
+  },
+  {
+    "name": "CAPP-6",
+    "path": "limit_data/axion_photon/CAPP-6.txt",
+    "category": "single"
+  },
+  {
+    "name": "CAPP-7",
+    "path": "limit_data/axion_photon/CAPP-7.txt",
+    "category": "single"
+  },
+  {
+    "name": "CAPP-8",
+    "path": "limit_data/axion_photon/CAPP-8.txt",
+    "category": "single"
+  },
+  {
+    "name": "CAPP-9",
+    "path": "limit_data/axion_photon/CAPP-9.txt",
+    "category": "single"
+  },
+  {
+    "name": "CAPP-MAX",
+    "path": "limit_data/axion_photon/CAPP-MAX.txt",
+    "category": "single"
+  },
+  {
+    "name": "CAST",
+    "path": "limit_data/axion_photon/CAST.txt",
+    "category": "single"
+  },
+  {
+    "name": "CAST highm",
+    "path": "limit_data/axion_photon/CAST_highm.txt",
+    "category": "single"
+  },
+  {
+    "name": "CAST-CAPP",
+    "path": "limit_data/axion_photon/CAST-CAPP.txt",
+    "category": "single"
+  },
+  {
+    "name": "Chandra H1821643",
+    "path": "limit_data/axion_photon/Chandra_H1821643.txt",
+    "category": "single"
+  },
+  {
+    "name": "Chandra HYDRA A",
+    "path": "limit_data/axion_photon/Chandra_HYDRA_A.txt",
+    "category": "single"
+  },
+  {
+    "name": "Chandra M87",
+    "path": "limit_data/axion_photon/Chandra_M87.txt",
+    "category": "single"
+  },
+  {
+    "name": "Chandra NGC1275",
+    "path": "limit_data/axion_photon/Chandra_NGC1275.txt",
+    "category": "single"
+  },
+  {
+    "name": "Chandra WhiteDwarfs electron equals photon",
+    "path": "limit_data/axion_photon/Chandra_WhiteDwarfs_electron_equals_photon.txt",
+    "category": "single"
+  },
+  {
+    "name": "Chandra WhiteDwarfs Wphobic",
+    "path": "limit_data/axion_photon/Chandra_WhiteDwarfs_Wphobic.txt",
+    "category": "single"
+  },
+  {
+    "name": "CIBER",
+    "path": "limit_data/axion_photon/CIBER.txt",
+    "category": "single"
+  },
+  {
+    "name": "CMB",
+    "path": "limit_data/axion_photon/CMB.txt",
+    "category": "single"
+  },
+  {
+    "name": "CMB Anisotropies",
+    "path": "limit_data/axion_photon/CMB_Anisotropies.txt",
+    "category": "single"
+  },
+  {
+    "name": "CMS PbPb",
+    "path": "limit_data/axion_photon/CMS_PbPb.txt",
+    "category": "single"
+  },
+  {
+    "name": "COBE-FIRAS",
+    "path": "limit_data/axion_photon/COBE-FIRAS.txt",
+    "category": "single"
+  },
+  {
+    "name": "COBEFIRAS Cyr",
+    "path": "limit_data/axion_photon/COBEFIRAS_Cyr.txt",
+    "category": "single"
+  },
+  {
+    "name": "Collider Y invgamma",
+    "path": "limit_data/axion_photon/Collider_Y_invgamma.txt",
+    "category": "single"
+  },
+  {
+    "name": "CosmicBackground",
+    "path": "limit_data/axion_photon/CosmicBackground.txt",
+    "category": "single"
+  },
+  {
+    "name": "CROWS",
+    "path": "limit_data/axion_photon/CROWS.txt",
+    "category": "single"
+  },
+  {
+    "name": "DANCE",
+    "path": "limit_data/axion_photon/DANCE.txt",
+    "category": "single"
+  },
+  {
+    "name": "DESI",
+    "path": "limit_data/axion_photon/DESI.txt",
+    "category": "single"
+  },
+  {
+    "name": "DiffuseGammaRays",
+    "path": "limit_data/axion_photon/DiffuseGammaRays.txt",
+    "category": "single"
+  },
+  {
+    "name": "DSNALP",
+    "path": "limit_data/axion_photon/DSNALP.txt",
+    "category": "single"
+  },
+  {
+    "name": "EBL",
+    "path": "limit_data/axion_photon/EBL.txt",
+    "category": "single"
+  },
+  {
+    "name": "EBL2",
+    "path": "limit_data/axion_photon/EBL2.txt",
+    "category": "single"
+  },
+  {
+    "name": "EPTA",
+    "path": "limit_data/axion_photon/EPTA.txt",
+    "category": "single"
+  },
+  {
+    "name": "eROSITA",
+    "path": "limit_data/axion_photon/eROSITA.txt",
+    "category": "single"
+  },
+  {
+    "name": "Eskdalemuir",
+    "path": "limit_data/axion_photon/Eskdalemuir.txt",
+    "category": "single"
+  },
+  {
+    "name": "EuXFL",
+    "path": "limit_data/axion_photon/EuXFL.txt",
+    "category": "single"
+  },
+  {
+    "name": "FASER",
+    "path": "limit_data/axion_photon/FASER.txt",
+    "category": "single"
+  },
+  {
+    "name": "Fermi bound",
+    "path": "limit_data/axion_photon/Fermi_bound.txt",
+    "category": "single"
+  },
+  {
+    "name": "Fermi hole",
+    "path": "limit_data/axion_photon/Fermi_hole.txt",
+    "category": "single"
+  },
+  {
+    "name": "Fermi1",
+    "path": "limit_data/axion_photon/Fermi1.txt",
+    "category": "single"
+  },
+  {
+    "name": "Fermi2",
+    "path": "limit_data/axion_photon/Fermi2.txt",
+    "category": "single"
+  },
+  {
+    "name": "FermiQuasars",
+    "path": "limit_data/axion_photon/FermiQuasars.txt",
+    "category": "single"
+  },
+  {
+    "name": "FIRAS",
+    "path": "limit_data/axion_photon/FIRAS.txt",
+    "category": "single"
+  },
+  {
+    "name": "GammaRayAttenuation",
+    "path": "limit_data/axion_photon/GammaRayAttenuation.txt",
+    "category": "single"
+  },
+  {
+    "name": "GammaRayDecayCompilation",
+    "path": "limit_data/axion_photon/GammaRayDecayCompilation.txt",
+    "category": "single"
+  },
+  {
+    "name": "GigaBREAD",
+    "path": "limit_data/axion_photon/GigaBREAD.txt",
+    "category": "single"
+  },
+  {
+    "name": "GlobularClusters",
+    "path": "limit_data/axion_photon/GlobularClusters.txt",
+    "category": "single"
+  },
+  {
+    "name": "GlobularClusters-R",
+    "path": "limit_data/axion_photon/GlobularClusters-R.txt",
+    "category": "single"
+  },
+  {
+    "name": "GlobularClusters-R2",
+    "path": "limit_data/axion_photon/GlobularClusters-R2.txt",
+    "category": "single"
+  },
+  {
+    "name": "GlueX",
+    "path": "limit_data/axion_photon/GlueX.txt",
+    "category": "single"
+  },
+  {
+    "name": "GrAHal",
+    "path": "limit_data/axion_photon/GrAHal.txt",
+    "category": "single"
+  },
+  {
+    "name": "GW170817",
+    "path": "limit_data/axion_photon/GW170817.txt",
+    "category": "single"
+  },
+  {
+    "name": "GW170817 Fermi",
+    "path": "limit_data/axion_photon/GW170817_Fermi.txt",
+    "category": "single"
+  },
+  {
+    "name": "HAWC",
+    "path": "limit_data/axion_photon/HAWC.txt",
+    "category": "single"
+  },
+  {
+    "name": "HAYSTAC",
+    "path": "limit_data/axion_photon/HAYSTAC.txt",
+    "category": "single"
+  },
+  {
+    "name": "HAYSTAC PhaseI",
+    "path": "limit_data/axion_photon/HAYSTAC_PhaseI.txt",
+    "category": "single"
+  },
+  {
+    "name": "HAYSTAC PhaseII ab",
+    "path": "limit_data/axion_photon/HAYSTAC_PhaseII_ab.txt",
+    "category": "single"
+  },
+  {
+    "name": "HAYSTAC PhaseII cd",
+    "path": "limit_data/axion_photon/HAYSTAC_PhaseII_cd.txt",
+    "category": "single"
+  },
+  {
+    "name": "HESS",
+    "path": "limit_data/axion_photon/HESS.txt",
+    "category": "single"
+  },
+  {
+    "name": "HST",
+    "path": "limit_data/axion_photon/HST.txt",
+    "category": "single"
+  },
+  {
+    "name": "HST dwarfs",
+    "path": "limit_data/axion_photon/HST_dwarfs.txt",
+    "category": "single"
+  },
+  {
+    "name": "HST Nakayama",
+    "path": "limit_data/axion_photon/HST_Nakayama.txt",
+    "category": "single"
+  },
+  {
+    "name": "INTEGRAL",
+    "path": "limit_data/axion_photon/INTEGRAL.txt",
+    "category": "single"
+  },
+  {
+    "name": "IrreducibleFreezeIn",
+    "path": "limit_data/axion_photon/IrreducibleFreezeIn.txt",
+    "category": "single"
+  },
+  {
+    "name": "JWST",
+    "path": "limit_data/axion_photon/JWST.txt",
+    "category": "single"
+  },
+  {
+    "name": "JWST Pinetti",
+    "path": "limit_data/axion_photon/JWST_Pinetti.txt",
+    "category": "single"
+  },
+  {
+    "name": "JWST Saha",
+    "path": "limit_data/axion_photon/JWST_Saha.txt",
+    "category": "single"
+  },
+  {
+    "name": "LensedQuasar",
+    "path": "limit_data/axion_photon/LensedQuasar.txt",
+    "category": "single"
+  },
+  {
+    "name": "LeoT",
+    "path": "limit_data/axion_photon/LeoT.txt",
+    "category": "single"
+  },
+  {
+    "name": "LEP",
+    "path": "limit_data/axion_photon/LEP.txt",
+    "category": "single"
+  },
+  {
+    "name": "LHC pp",
+    "path": "limit_data/axion_photon/LHC_pp.txt",
+    "category": "single"
+  },
+  {
+    "name": "LIDA",
+    "path": "limit_data/axion_photon/LIDA.txt",
+    "category": "single"
+  },
+  {
+    "name": "M82",
+    "path": "limit_data/axion_photon/M82.txt",
+    "category": "single"
+  },
+  {
+    "name": "M82 decay",
+    "path": "limit_data/axion_photon/M82_decay.txt",
+    "category": "single"
+  },
+  {
+    "name": "MADMAX",
+    "path": "limit_data/axion_photon/MADMAX.txt",
+    "category": "single"
+  },
+  {
+    "name": "MAGIC",
+    "path": "limit_data/axion_photon/MAGIC.txt",
+    "category": "single"
+  },
+  {
+    "name": "MiniBooNE",
+    "path": "limit_data/axion_photon/MiniBooNE.txt",
+    "category": "single"
+  },
+  {
+    "name": "MOJAVE",
+    "path": "limit_data/axion_photon/MOJAVE.txt",
+    "category": "single"
+  },
+  {
+    "name": "Mrk421",
+    "path": "limit_data/axion_photon/Mrk421.txt",
+    "category": "single"
+  },
+  {
+    "name": "Mrk421-Fermi",
+    "path": "limit_data/axion_photon/Mrk421-Fermi.txt",
+    "category": "single"
+  },
+  {
+    "name": "Mrk421-Fermi-HAWC",
+    "path": "limit_data/axion_photon/Mrk421-Fermi-HAWC.txt",
+    "category": "single"
+  },
+  {
+    "name": "Mrk421-MAGIC",
+    "path": "limit_data/axion_photon/Mrk421-MAGIC.txt",
+    "category": "single"
+  },
+  {
+    "name": "MWDPolarisation",
+    "path": "limit_data/axion_photon/MWDPolarisation.txt",
+    "category": "single"
+  },
+  {
+    "name": "MWDPolarisation KeckLick",
+    "path": "limit_data/axion_photon/MWDPolarisation_KeckLick.txt",
+    "category": "single"
+  },
+  {
+    "name": "MWDXrays",
+    "path": "limit_data/axion_photon/MWDXrays.txt",
+    "category": "single"
+  },
+  {
+    "name": "NeutronStars Battye",
+    "path": "limit_data/axion_photon/NeutronStars_Battye.txt",
+    "category": "single"
+  },
+  {
+    "name": "NeutronStars Battye2",
+    "path": "limit_data/axion_photon/NeutronStars_Battye2.txt",
+    "category": "single"
+  },
+  {
+    "name": "NeutronStars BreakthroughListen",
+    "path": "limit_data/axion_photon/NeutronStars_BreakthroughListen.txt",
+    "category": "single"
+  },
+  {
+    "name": "NeutronStars GreenBank",
+    "path": "limit_data/axion_photon/NeutronStars_GreenBank.txt",
+    "category": "single"
+  },
+  {
+    "name": "NeutronStars VLA",
+    "path": "limit_data/axion_photon/NeutronStars_VLA.txt",
+    "category": "single"
+  },
+  {
+    "name": "NOMAD",
+    "path": "limit_data/axion_photon/NOMAD.txt",
+    "category": "single"
+  },
+  {
+    "name": "NuSTAR",
+    "path": "limit_data/axion_photon/NuSTAR.txt",
+    "category": "single"
+  },
+  {
+    "name": "NuSTAR Sun",
+    "path": "limit_data/axion_photon/NuSTAR_Sun.txt",
+    "category": "single"
+  },
+  {
+    "name": "OPAL",
+    "path": "limit_data/axion_photon/OPAL.txt",
+    "category": "single"
+  },
+  {
+    "name": "ORGAN",
+    "path": "limit_data/axion_photon/ORGAN.txt",
+    "category": "single"
+  },
+  {
+    "name": "ORGAN-1a",
+    "path": "limit_data/axion_photon/ORGAN-1a.txt",
+    "category": "single"
+  },
+  {
+    "name": "ORGAN-1a raw",
+    "path": "limit_data/axion_photon/ORGAN-1a_raw.txt",
+    "category": "single"
+  },
+  {
+    "name": "ORGAN-1b",
+    "path": "limit_data/axion_photon/ORGAN-1b.txt",
+    "category": "single"
+  },
+  {
+    "name": "ORGAN-Q",
+    "path": "limit_data/axion_photon/ORGAN-Q.txt",
+    "category": "single"
+  },
+  {
+    "name": "OSQAR",
+    "path": "limit_data/axion_photon/OSQAR.txt",
+    "category": "single"
+  },
+  {
+    "name": "Perseus-gammarays",
+    "path": "limit_data/axion_photon/Perseus-gammarays.txt",
+    "category": "single"
+  },
+  {
+    "name": "Planck DM Birefingence",
+    "path": "limit_data/axion_photon/Planck_DM_Birefingence.txt",
+    "category": "single"
+  },
+  {
+    "name": "Planck unWISE",
+    "path": "limit_data/axion_photon/Planck_unWISE.txt",
+    "category": "single"
+  },
+  {
+    "name": "POLARBEAR",
+    "path": "limit_data/axion_photon/POLARBEAR.txt",
+    "category": "single"
+  },
+  {
+    "name": "POLARBEAR TauT",
+    "path": "limit_data/axion_photon/POLARBEAR_TauT.txt",
+    "category": "single"
+  },
+  {
+    "name": "PPA",
+    "path": "limit_data/axion_photon/PPA.txt",
+    "category": "single"
+  },
+  {
+    "name": "PPTA-QUIJOTE",
+    "path": "limit_data/axion_photon/PPTA-QUIJOTE.txt",
+    "category": "single"
+  },
+  {
+    "name": "PrimEx",
+    "path": "limit_data/axion_photon/PrimEx.txt",
+    "category": "single"
+  },
+  {
+    "name": "PSRJ0437-4715",
+    "path": "limit_data/axion_photon/PSRJ0437-4715.txt",
+    "category": "single"
+  },
+  {
+    "name": "PulsarPolarCap",
+    "path": "limit_data/axion_photon/PulsarPolarCap.txt",
+    "category": "single"
+  },
+  {
+    "name": "PVLAS",
+    "path": "limit_data/axion_photon/PVLAS.txt",
+    "category": "single"
+  },
+  {
+    "name": "QUAX",
+    "path": "limit_data/axion_photon/QUAX.txt",
+    "category": "single"
+  },
+  {
+    "name": "QUAX2",
+    "path": "limit_data/axion_photon/QUAX2.txt",
+    "category": "single"
+  },
+  {
+    "name": "QUAX3",
+    "path": "limit_data/axion_photon/QUAX3.txt",
+    "category": "single"
+  },
+  {
+    "name": "QUAX4",
+    "path": "limit_data/axion_photon/QUAX4.txt",
+    "category": "single"
+  },
+  {
+    "name": "QUAX5",
+    "path": "limit_data/axion_photon/QUAX5.txt",
+    "category": "single"
+  },
+  {
+    "name": "RADES",
+    "path": "limit_data/axion_photon/RADES.txt",
+    "category": "single"
+  },
+  {
+    "name": "RADES2",
+    "path": "limit_data/axion_photon/RADES2.txt",
+    "category": "single"
+  },
+  {
+    "name": "RBF",
+    "path": "limit_data/axion_photon/RBF.txt",
+    "category": "single"
+  },
+  {
+    "name": "RBF UF Haloscopes",
+    "path": "limit_data/axion_photon/RBF_UF_Haloscopes.txt",
+    "category": "single"
+  },
+  {
+    "name": "SAPPHIRES",
+    "path": "limit_data/axion_photon/SAPPHIRES.txt",
+    "category": "single"
+  },
+  {
+    "name": "SgrA",
+    "path": "limit_data/axion_photon/SgrA.txt",
+    "category": "single"
+  },
+  {
+    "name": "SHAFT",
+    "path": "limit_data/axion_photon/SHAFT.txt",
+    "category": "single"
+  },
+  {
+    "name": "SN1987A 2019",
+    "path": "limit_data/axion_photon/SN1987A_2019.txt",
+    "category": "single"
+  },
+  {
+    "name": "SN1987A decay",
+    "path": "limit_data/axion_photon/SN1987A_decay.txt",
+    "category": "single"
+  },
+  {
+    "name": "SN1987A gamma",
+    "path": "limit_data/axion_photon/SN1987A_gamma.txt",
+    "category": "single"
+  },
+  {
+    "name": "SN1987A gamma ProgenitorBfield",
+    "path": "limit_data/axion_photon/SN1987A_gamma_ProgenitorBfield.txt",
+    "category": "single"
+  },
+  {
+    "name": "SN1987A HeavyALP gamma",
+    "path": "limit_data/axion_photon/SN1987A_HeavyALP_gamma.txt",
+    "category": "single"
+  },
+  {
+    "name": "SN1987A HeavyALP nu",
+    "path": "limit_data/axion_photon/SN1987A_HeavyALP_nu.txt",
+    "category": "single"
+  },
+  {
+    "name": "SN1987A PVO",
+    "path": "limit_data/axion_photon/SN1987A_PVO.txt",
+    "category": "single"
+  },
+  {
+    "name": "SNe-decay",
+    "path": "limit_data/axion_photon/SNe-decay.txt",
+    "category": "single"
+  },
+  {
+    "name": "SNe-decay-Fiorillo",
+    "path": "limit_data/axion_photon/SNe-decay-Fiorillo.txt",
+    "category": "single"
+  },
+  {
+    "name": "SNe-gamma",
+    "path": "limit_data/axion_photon/SNe-gamma.txt",
+    "category": "single"
+  },
+  {
+    "name": "SNIPE",
+    "path": "limit_data/axion_photon/SNIPE.txt",
+    "category": "single"
+  },
+  {
+    "name": "SolarBasin",
+    "path": "limit_data/axion_photon/SolarBasin.txt",
+    "category": "single"
+  },
+  {
+    "name": "SolarBasin Beaufort",
+    "path": "limit_data/axion_photon/SolarBasin_Beaufort.txt",
+    "category": "single"
+  },
+  {
+    "name": "SolarNu",
+    "path": "limit_data/axion_photon/SolarNu.txt",
+    "category": "single"
+  },
+  {
+    "name": "SPT",
+    "path": "limit_data/axion_photon/SPT.txt",
+    "category": "single"
+  },
+  {
+    "name": "StAB",
+    "path": "limit_data/axion_photon/StAB.txt",
+    "category": "single"
+  },
+  {
+    "name": "SUMICO",
+    "path": "limit_data/axion_photon/SUMICO.txt",
+    "category": "single"
+  },
+  {
+    "name": "SuperMAG",
+    "path": "limit_data/axion_photon/SuperMAG.txt",
+    "category": "single"
+  },
+  {
+    "name": "SuperMAG2",
+    "path": "limit_data/axion_photon/SuperMAG2.txt",
+    "category": "single"
+  },
+  {
+    "name": "TASEH",
+    "path": "limit_data/axion_photon/TASEH.txt",
+    "category": "single"
+  },
+  {
+    "name": "Telescopes Haystack",
+    "path": "limit_data/axion_photon/Telescopes_Haystack.txt",
+    "category": "single"
+  },
+  {
+    "name": "Telescopes MUSE",
+    "path": "limit_data/axion_photon/Telescopes_MUSE.txt",
+    "category": "single"
+  },
+  {
+    "name": "Telescopes VIMOS",
+    "path": "limit_data/axion_photon/Telescopes_VIMOS.txt",
+    "category": "single"
+  },
+  {
+    "name": "UF",
+    "path": "limit_data/axion_photon/UF.txt",
+    "category": "single"
+  },
+  {
+    "name": "UPLOAD",
+    "path": "limit_data/axion_photon/UPLOAD.txt",
+    "category": "single"
+  },
+  {
+    "name": "UPLOAD-2",
+    "path": "limit_data/axion_photon/UPLOAD-2.txt",
+    "category": "single"
+  },
+  {
+    "name": "WhiteDwarfs",
+    "path": "limit_data/axion_photon/WhiteDwarfs.txt",
+    "category": "single"
+  },
+  {
+    "name": "WINERED",
+    "path": "limit_data/axion_photon/WINERED.txt",
+    "category": "single"
+  },
+  {
+    "name": "x ion",
+    "path": "limit_data/axion_photon/x_ion.txt",
+    "category": "single"
+  },
+  {
+    "name": "XMM-Newton",
+    "path": "limit_data/axion_photon/XMM-Newton.txt",
+    "category": "single"
+  },
+  {
+    "name": "XRAY",
+    "path": "limit_data/axion_photon/XRAY.txt",
+    "category": "single"
+  },
+  {
+    "name": "Xray-SuperStarClusters",
+    "path": "limit_data/axion_photon/Xray-SuperStarClusters.txt",
+    "category": "single"
+  },
+  {
+    "name": "XRISM",
+    "path": "limit_data/axion_photon/XRISM.txt",
+    "category": "single"
+  }
+]
