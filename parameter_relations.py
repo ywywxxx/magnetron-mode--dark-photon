@@ -127,6 +127,30 @@ add_relation(
 )
 
 add_relation(
+    name="B_ext",
+    expression="10 * T",
+    note="Default external magnetic field for the axion scan.",
+)
+
+add_relation(
+    name="B_ext_min",
+    expression="0.1 * T",
+    note="Lower adjustable bound for B_ext.",
+)
+
+add_relation(
+    name="B_ext_max",
+    expression="20 * T",
+    note="Upper adjustable bound for B_ext.",
+)
+
+add_relation(
+    name="n_m_axion",
+    expression="0",
+    note="Default magnetron occupation used in the axion free-rate factor, so n_m + 1 = 1.",
+)
+
+add_relation(
     name="sin2theta_avg",
     expression="2 / 3",
     note="Default angular average <sin^2 theta> for an isotropic dark matter field.",
@@ -251,6 +275,44 @@ add_relation(
     expression="delta_m * sqrt(Gamma_m * t_ave)",
     depends_on=("delta_m", "Gamma_m", "t_ave"),
     note="Magnetron signal scale from delta_m times sqrt(Gamma_m * t_ave).",
+)
+
+add_relation(
+    name="m_a_resonance",
+    expression="omega_m",
+    depends_on=("omega_m",),
+    note="Axion scan assumes m_a = omega_m on resonance.",
+)
+
+add_relation(
+    name="Delta_omega_axion",
+    expression="1e-6 * omega_m",
+    depends_on=("omega_m",),
+    note="Axion dark matter bandwidth.",
+)
+
+add_relation(
+    name="Gamma_m_axion_free",
+    expression=(
+        "g_a**2 / m_a_resonance**3 * B_ext**2 * "
+        "e**2*pi*(n_m_axion + 1)/(2*m_e) * rho_DM/Delta_omega_axion"
+    ),
+    depends_on=(
+        "g_a",
+        "m_a_resonance",
+        "B_ext",
+        "n_m_axion",
+        "rho_DM",
+        "Delta_omega_axion",
+    ),
+    note="Axion free transition rate. g_a is interpreted as g_{a gamma} in natural units.",
+)
+
+add_relation(
+    name="sigma_m_axion",
+    expression="delta_m * sqrt(Gamma_m_axion_free * t_ave)",
+    depends_on=("delta_m", "Gamma_m_axion_free", "t_ave"),
+    note="Axion-induced magnetron signal scale.",
 )
 
 # Detection probability.

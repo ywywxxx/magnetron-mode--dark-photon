@@ -406,6 +406,18 @@
         </div>
       </div>
 
+      <div class="control" data-control="bExt">
+        <div class="label-row">
+          <label for="bExtRange">B_ext</label>
+          <span class="range-text">0.1 T - 20 T</span>
+        </div>
+        <input id="bExtRange" type="range" min="0" max="1000" step="1">
+        <div class="input-row">
+          <input id="bExtInput" type="number" step="any">
+          <div class="unit">T</div>
+        </div>
+      </div>
+
       <div class="control" data-control="tAve">
         <div class="label-row">
           <label for="tAveRange">t_ave</label>
@@ -482,6 +494,13 @@
       </section>
 
       <section>
+        <h2>Axion Scan</h2>
+        <div class="chart-wrap">
+          <canvas id="axionPlot" width="640" height="640" aria-label="g_min versus omega_m"></canvas>
+        </div>
+      </section>
+
+      <section>
         <h2>Current Point</h2>
         <div class="grid">
           <div>
@@ -491,6 +510,7 @@
             <div class="row"><span>R</span><span id="outRadius"></span></div>
             <div class="row"><span>R_trap</span><span id="outTrapRadius"></span></div>
             <div class="row"><span>T_wall</span><span id="outWallTemp"></span></div>
+            <div class="row"><span>B_ext</span><span id="outBExt"></span></div>
             <div class="row"><span>t_ave</span><span id="outTAve"></span></div>
             <div class="row"><span>t_obs</span><span id="outTObs"></span></div>
             <div class="row"><span>SNR threshold</span><span id="outSNRThreshold"></span></div>
@@ -511,6 +531,7 @@
           <div>
             <div class="row"><span>kappa_m^2</span><span id="outKappa"></span></div>
             <div class="row"><span>epsilon_BBR</span><span id="outEpsilonBBR"></span></div>
+            <div class="row"><span>g_axion,min</span><span id="outAxionGMin"></span></div>
             <div class="row"><span>delta_c</span><span id="outDeltaC"></span></div>
             <div class="row"><span>delta_m</span><span id="outDeltaM"></span></div>
           </div>
@@ -541,6 +562,8 @@
       mm: 3.335634875843604e-12,
       m: 3.335634875843604e-9,
       K: 86173.3 * 1.51927e6,
+      T: 195.35277185654138 * (1.51927e15 ** 2),
+      mElectron: 510998.95069 * 1.51927e15,
       e: 0.303
     };
 
@@ -555,6 +578,8 @@
       trapRadiusMax: 10 * U.cm,
       wallTempMin: 1e-3 * U.K,
       wallTempMax: 1 * U.K,
+      bExtMin: 0.1 * U.T,
+      bExtMax: 20 * U.T,
       tObsMin: 1e-6 * U.sec,
       tObsMax: U.year,
       snrThresholdMin: 3,
@@ -570,6 +595,7 @@
       radius: 1 * U.m,
       trapRadius: 0.3 * U.mm,
       wallTemp: 0.01 * U.K,
+      bExt: 10 * U.T,
       tObs: 6 * U.sec,
       tAve: 2 * U.sec,
       snrThreshold: 5
@@ -586,6 +612,7 @@
       radius: control("radius", U.m, "m"),
       trapRadius: control("trapRadius", U.mm, "mm"),
       wallTemp: control("wallTemp", U.K, "K"),
+      bExt: control("bExt", U.T, "T"),
       tAve: control("tAve", U.sec, "sec"),
       tObs: control("tObs", U.sec, "sec"),
       snrThreshold: control("snrThreshold", 1, "sigma")
@@ -772,6 +799,7 @@
       setBounds("radius", ranges.radiusMin, ranges.radiusMax);
       setBounds("trapRadius", ranges.trapRadiusMin, ranges.trapRadiusMax);
       setBounds("wallTemp", ranges.wallTempMin, ranges.wallTempMax);
+      setBounds("bExt", ranges.bExtMin, ranges.bExtMax);
       setBounds("tObs", ranges.tObsMin, ranges.tObsMax);
       setBounds("tAve", state.tObs / 1e9, state.tObs);
       setBounds("snrThreshold", ranges.snrThresholdMin, ranges.snrThresholdMax);
@@ -779,6 +807,7 @@
       state.omegaC = clamp(state.omegaC, omegaCMin, omegaCMax);
       state.omegaZ = clamp(state.omegaZ, omegaZMin, omegaZMax);
       state.trapRadius = clamp(state.trapRadius, controls.trapRadius.min, controls.trapRadius.max);
+      state.bExt = clamp(state.bExt, ranges.bExtMin, ranges.bExtMax);
       state.tAve = clamp(state.tAve, controls.tAve.min, controls.tAve.max);
       state.snrThreshold = clamp(state.snrThreshold, ranges.snrThresholdMin, ranges.snrThresholdMax);
       if (activeTune === "omegaC") {
@@ -806,6 +835,7 @@
       syncControl("radius", state.radius);
       syncControl("trapRadius", state.trapRadius);
       syncControl("wallTemp", state.wallTemp);
+      syncControl("bExt", state.bExt);
       syncControl("tAve", state.tAve);
       syncControl("tObs", state.tObs);
       syncControl("snrThreshold", state.snrThreshold);
@@ -906,6 +936,46 @@
       };
     }
 
+    function calculateAxionFor(point) {
+      const nRequired = point.tObs / point.tAve;
+      const pRequired = -Math.expm1(Math.log(0.05) / nRequired);
+      const zRequired = inverseOneSidedTailProbability(0.5 * pRequired);
+
+      const rhoDM = 4.5 * U.GeV / U.cm ** 3;
+      const nMAxion = 0;
+      const sigmaNoise = 0.03 * U.Hz / Math.sqrt(point.tAve / U.sec);
+      const threshold = point.snrThreshold * sigmaNoise;
+      const deltaC = 2 * Math.PI * 57 * U.kHz * (10 * U.MHz / (point.omegaZ / (2 * Math.PI)));
+      const deltaM = deltaC * point.omegaM / point.omegaC;
+      const deltaOmega = point.omegaM * 1e-6;
+      const gammaOverG2 =
+        (point.bExt ** 2 / point.omegaM ** 3)
+        * (U.e ** 2 * Math.PI * (nMAxion + 1) / (2 * U.mElectron))
+        * (rhoDM / deltaOmega)
+        / U.GeV ** 2;
+      const signalPerG = deltaM * Math.sqrt(gammaOverG2 * point.tAve);
+      const gMin = threshold / (zRequired * signalPerG);
+      const sigmaM = signalPerG * gMin;
+      const gammaM = gammaOverG2 * gMin ** 2;
+
+      if (!Number.isFinite(gMin) || gMin <= 0) {
+        return { error: "axion calculation is not finite" };
+      }
+
+      return {
+        gMin,
+        pRequired,
+        zRequired,
+        nRequired,
+        sigmaNoise,
+        sigmaM,
+        threshold,
+        deltaC,
+        deltaM,
+        gammaM
+      };
+    }
+
     function calculateBBRBound(point, knownKappa = null) {
       const rhoDM = 4.5 * U.GeV / U.cm ** 3;
       const R = point.radius;
@@ -952,6 +1022,7 @@
         radius: state.radius,
         trapRadius: state.trapRadius,
         wallTemp: state.wallTemp,
+        bExt: state.bExt,
         tAve: state.tAve,
         tObs: state.tObs,
         snrThreshold: state.snrThreshold
@@ -1259,8 +1330,222 @@
       ctx.restore();
     }
 
+    function drawAxionPlot(currentResult) {
+      const canvas = document.getElementById("axionPlot");
+      const rect = canvas.getBoundingClientRect();
+      const scale = window.devicePixelRatio || 1;
+      canvas.width = Math.max(600, Math.floor(rect.width * scale));
+      canvas.height = Math.max(320, Math.floor(rect.height * scale));
+      const ctx = canvas.getContext("2d");
+      ctx.setTransform(scale, 0, 0, scale, 0, 0);
+
+      const width = canvas.width / scale;
+      const height = canvas.height / scale;
+      const pad = { left: 78, right: 24, top: 24, bottom: 54 };
+      const plotW = width - pad.left - pad.right;
+      const plotH = height - pad.top - pad.bottom;
+
+      ctx.clearRect(0, 0, width, height);
+      ctx.fillStyle = "#fff";
+      ctx.fillRect(0, 0, width, height);
+
+      const points = [];
+      const n = 180;
+      for (let i = 0; i < n; i += 1) {
+        const f = i / (n - 1);
+        const omegaM = Math.exp(Math.log(ranges.omegaMMin) + f * (Math.log(ranges.omegaMMax) - Math.log(ranges.omegaMMin)));
+        const point = pointForOmegaM(omegaM);
+        if (!point) continue;
+        const result = calculateAxionFor(point);
+        const fullAveResult = calculateAxionFor({ ...point, tAve: point.tObs });
+        if (!result.error && Number.isFinite(result.gMin) && result.gMin > 0) {
+          points.push({
+            omegaM,
+            g: result.gMin,
+            gFullAve: fullAveResult.error ? NaN : fullAveResult.gMin
+          });
+        }
+      }
+
+      let currentFullAveResult = null;
+      if (!currentResult.error && Number.isFinite(currentResult.gMin)) {
+        currentFullAveResult = calculateAxionFor({ ...state, tAve: state.tObs });
+        points.push({
+          omegaM: state.omegaM,
+          g: currentResult.gMin,
+          gFullAve: currentFullAveResult.error ? NaN : currentFullAveResult.gMin,
+          current: true
+        });
+      }
+
+      if (points.length < 2) return;
+
+      const massMin = ranges.omegaMMin / U.neV;
+      const massMax = ranges.omegaMMax / U.neV;
+      const xPadding = 0.12 * (Math.log10(massMax) - Math.log10(massMin));
+      const xMin = 10 ** (Math.log10(massMin) - xPadding);
+      const xMax = 10 ** (Math.log10(massMax) + xPadding);
+      const yValues = points
+        .flatMap(p => [p.g, p.gFullAve])
+        .filter(y => Number.isFinite(y) && y > 0);
+      let yMin = Math.min(...yValues);
+      let yMax = Math.max(...yValues);
+      yMin = 10 ** Math.floor(Math.log10(yMin) - 0.25);
+      yMax = 10 ** Math.ceil(Math.log10(yMax) + 0.25);
+
+      const xToPx = x => pad.left + (Math.log10(x) - Math.log10(xMin)) / (Math.log10(xMax) - Math.log10(xMin)) * plotW;
+      const yToPx = y => pad.top + (Math.log10(yMax) - Math.log10(y)) / (Math.log10(yMax) - Math.log10(yMin)) * plotH;
+
+      ctx.strokeStyle = "#d9dee5";
+      ctx.lineWidth = 1;
+      ctx.fillStyle = "#667085";
+      ctx.font = "12px ui-monospace, SFMono-Regular, Menlo, Consolas, monospace";
+      ctx.textAlign = "center";
+      ctx.textBaseline = "top";
+
+      for (let e = Math.ceil(Math.log10(xMin)); e <= Math.floor(Math.log10(xMax)); e += 1) {
+        const x = 10 ** e;
+        const px = xToPx(x);
+        ctx.beginPath();
+        ctx.moveTo(px, pad.top);
+        ctx.lineTo(px, pad.top + plotH);
+        ctx.stroke();
+        ctx.fillText(`1e${e}`, px, pad.top + plotH + 8);
+      }
+
+      ctx.textAlign = "right";
+      ctx.textBaseline = "middle";
+      for (let e = Math.ceil(Math.log10(yMin)); e <= Math.floor(Math.log10(yMax)); e += 1) {
+        const y = 10 ** e;
+        const py = yToPx(y);
+        ctx.beginPath();
+        ctx.moveTo(pad.left, py);
+        ctx.lineTo(pad.left + plotW, py);
+        ctx.stroke();
+        ctx.fillText(`1e${e}`, pad.left - 8, py);
+      }
+
+      ctx.strokeStyle = "#1f2933";
+      ctx.lineWidth = 1.2;
+      ctx.strokeRect(pad.left, pad.top, plotW, plotH);
+
+      const sensitivityCurve = points.filter(p => !p.current);
+      if (sensitivityCurve.length > 1) {
+        ctx.fillStyle = "rgba(23, 107, 93, 0.12)";
+        ctx.beginPath();
+        const first = sensitivityCurve[0];
+        const firstX = xToPx(first.omegaM / U.neV);
+        ctx.moveTo(firstX, pad.top);
+        ctx.lineTo(firstX, yToPx(first.g));
+        for (const p of sensitivityCurve.slice(1)) {
+          ctx.lineTo(xToPx(p.omegaM / U.neV), yToPx(p.g));
+        }
+        const last = sensitivityCurve[sensitivityCurve.length - 1];
+        ctx.lineTo(xToPx(last.omegaM / U.neV), pad.top);
+        ctx.closePath();
+        ctx.fill();
+      }
+
+      ctx.strokeStyle = "#176b5d";
+      ctx.lineWidth = 2;
+      ctx.setLineDash([]);
+      ctx.beginPath();
+      let started = false;
+      for (const p of sensitivityCurve) {
+        const px = xToPx(p.omegaM / U.neV);
+        const py = yToPx(p.g);
+        if (!started) {
+          ctx.moveTo(px, py);
+          started = true;
+        } else {
+          ctx.lineTo(px, py);
+        }
+      }
+      ctx.stroke();
+
+      ctx.strokeStyle = "#2563eb";
+      ctx.lineWidth = 2;
+      ctx.setLineDash([2, 4]);
+      ctx.beginPath();
+      started = false;
+      for (const p of sensitivityCurve.filter(p => Number.isFinite(p.gFullAve) && p.gFullAve > 0)) {
+        const px = xToPx(p.omegaM / U.neV);
+        const py = yToPx(p.gFullAve);
+        if (!started) {
+          ctx.moveTo(px, py);
+          started = true;
+        } else {
+          ctx.lineTo(px, py);
+        }
+      }
+      ctx.stroke();
+      ctx.setLineDash([]);
+
+      if (!currentResult.error) {
+        const px = xToPx(state.omegaM / U.neV);
+        const py = yToPx(currentResult.gMin);
+        ctx.fillStyle = "#b42318";
+        ctx.beginPath();
+        ctx.arc(px, py, 5, 0, 2 * Math.PI);
+        ctx.fill();
+        ctx.strokeStyle = "#ffffff";
+        ctx.lineWidth = 2;
+        ctx.stroke();
+
+        if (currentFullAveResult && Number.isFinite(currentFullAveResult.gMin) && currentFullAveResult.gMin > 0) {
+          const pyFullAve = yToPx(currentFullAveResult.gMin);
+          ctx.fillStyle = "#2563eb";
+          ctx.beginPath();
+          ctx.moveTo(px, pyFullAve - 6);
+          ctx.lineTo(px + 6, pyFullAve + 5);
+          ctx.lineTo(px - 6, pyFullAve + 5);
+          ctx.closePath();
+          ctx.fill();
+          ctx.strokeStyle = "#ffffff";
+          ctx.lineWidth = 2;
+          ctx.stroke();
+        }
+      }
+
+      ctx.font = "12px Inter, system-ui, sans-serif";
+      ctx.textAlign = "left";
+      ctx.textBaseline = "middle";
+      const legendX = pad.left + 12;
+      let legendY = pad.top + 16;
+      ctx.strokeStyle = "#176b5d";
+      ctx.lineWidth = 2;
+      ctx.beginPath();
+      ctx.moveTo(legendX, legendY);
+      ctx.lineTo(legendX + 28, legendY);
+      ctx.stroke();
+      ctx.fillStyle = "#1f2933";
+      ctx.fillText("axion reach", legendX + 36, legendY);
+      legendY += 20;
+      ctx.strokeStyle = "#2563eb";
+      ctx.setLineDash([2, 4]);
+      ctx.beginPath();
+      ctx.moveTo(legendX, legendY);
+      ctx.lineTo(legendX + 28, legendY);
+      ctx.stroke();
+      ctx.setLineDash([]);
+      ctx.fillText("t_ave = t_obs", legendX + 36, legendY);
+
+      ctx.fillStyle = "#1f2933";
+      ctx.font = "13px Inter, system-ui, sans-serif";
+      ctx.textAlign = "center";
+      ctx.textBaseline = "bottom";
+      ctx.fillText("omega_m [neV]", pad.left + plotW / 2, height - 10);
+
+      ctx.save();
+      ctx.translate(18, pad.top + plotH / 2);
+      ctx.rotate(-Math.PI / 2);
+      ctx.fillText("g_agamma [GeV^-1]", 0, 0);
+      ctx.restore();
+    }
+
     function calculateAndRender() {
       const result = calculate();
+      const axionResult = calculateAxionFor(state);
       const status = document.getElementById("status");
 
       setNumber("outOmegaM", `${format(state.omegaM, U.neV)} neV`);
@@ -1269,6 +1554,7 @@
       setNumber("outRadius", `${format(state.radius, U.m)} m`);
       setNumber("outTrapRadius", `${format(state.trapRadius, U.mm)} mm`);
       setNumber("outWallTemp", `${format(state.wallTemp, U.K)} K`);
+      setNumber("outBExt", `${format(state.bExt, U.T)} T`);
       setNumber("outTAve", `${format(state.tAve, U.sec)} sec`);
       setNumber("outTObs", `${format(state.tObs, U.sec)} sec`);
       setNumber("outSNRThreshold", state.snrThreshold.toPrecision(4));
@@ -1279,10 +1565,11 @@
       if (result.error) {
         status.textContent = result.error;
         status.className = "status error";
-        for (const id of ["epsilonMin", "pDet", "nDet", "outSigmaNoise", "outSigmaM", "outThreshold", "outZThr", "outGammaM", "outKappa", "outEpsilonBBR", "outDeltaC", "outDeltaM"]) {
+        for (const id of ["epsilonMin", "pDet", "nDet", "outSigmaNoise", "outSigmaM", "outThreshold", "outZThr", "outGammaM", "outKappa", "outEpsilonBBR", "outAxionGMin", "outDeltaC", "outDeltaM"]) {
           setNumber(id, "not finite");
         }
         drawPlot(result);
+        drawAxionPlot(axionResult);
         return;
       }
 
@@ -1298,9 +1585,11 @@
       setNumber("outGammaM", `${format(result.gammaM, U.Hz)} Hz`);
       setNumber("outKappa", result.kappa.toExponential(6));
       setNumber("outEpsilonBBR", result.epsilonBBR > 0 ? result.epsilonBBR.toExponential(6) : "0");
+      setNumber("outAxionGMin", axionResult.error ? "not finite" : `${axionResult.gMin.toExponential(6)} GeV^-1`);
       setNumber("outDeltaC", `${format(result.deltaC, U.Hz)} Hz`);
       setNumber("outDeltaM", `${format(result.deltaM, U.Hz)} Hz`);
       drawPlot(result);
+      drawAxionPlot(axionResult);
     }
 
     function setFromSlider(name) {
@@ -1333,6 +1622,8 @@
         state.trapRadius = clamp(value, ranges.trapRadiusMin, ranges.trapRadiusMax);
       } else if (name === "wallTemp") {
         state.wallTemp = clamp(value, ranges.wallTempMin, ranges.wallTempMax);
+      } else if (name === "bExt") {
+        state.bExt = clamp(value, ranges.bExtMin, ranges.bExtMax);
       } else if (name === "tAve") {
         tAveManuallySet = true;
         state.tAve = clamp(value, controls.tAve.min, controls.tAve.max);

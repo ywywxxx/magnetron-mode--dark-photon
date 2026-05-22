@@ -127,12 +127,14 @@ def _build_unit_conversion() -> dict[str, Fraction]:
     Hz = _rational(1) / sec
     kHz = _rational("1e3") * Hz
     MHz = _rational("1e6") * Hz
+    T = Fraction(str(u.tesla_to_eV2)) * eV**2
     hour = _rational(3600) * sec
     day = _rational(24) * hour
     year = _rational(365) * day
     cm = _rational("50677.3") / eV
     mm = cm / _rational(10)
     m = _rational(100) * cm
+    m_e = _rational("510998.95069") * eV
 
     return {
         "alpha0": _rational(1) / _rational(137),
@@ -147,6 +149,8 @@ def _build_unit_conversion() -> dict[str, Fraction]:
         "Hz": Hz,
         "kHz": kHz,
         "MHz": MHz,
+        "T": T,
+        "m_e": m_e,
         "hour": hour,
         "day": day,
         "year": year,
