@@ -151,6 +151,31 @@ add_relation(
 )
 
 add_relation(
+    name="n_c_cavity",
+    expression="1e6",
+    note="Default large cyclotron occupation for the cavity approximation.",
+)
+
+add_relation(
+    name="m_ion_antiproton",
+    expression="0.9382720813 * GeV",
+    note="Default ion mass for the cyclotron cavity curve.",
+)
+
+add_relation(
+    name="m_ion_Ca40",
+    expression="37.2609 * GeV",
+    note="Approximate Ca40 ion mass; electron binding and missing electron mass are neglected.",
+)
+
+add_relation(
+    name="m_ion",
+    expression="m_ion_antiproton",
+    depends_on=("m_ion_antiproton",),
+    note="Ion mass used in the cyclotron cavity curve; selectable in the UI.",
+)
+
+add_relation(
     name="sin2theta_avg",
     expression="2 / 3",
     note="Default angular average <sin^2 theta> for an isotropic dark matter field.",
@@ -275,6 +300,31 @@ add_relation(
     expression="delta_m * sqrt(Gamma_m * t_ave)",
     depends_on=("delta_m", "Gamma_m", "t_ave"),
     note="Magnetron signal scale from delta_m times sqrt(Gamma_m * t_ave).",
+)
+
+add_relation(
+    name="Gamma_cavity",
+    expression=(
+        "kappa_m_squared * epsilon**2 * e**2*pi*(n_c_cavity + 1) "
+        "/ (2*m_ion*omega_m) * rho_DM/(1e-6*omega_m) * sin2theta_avg"
+    ),
+    depends_on=(
+        "kappa_m_squared",
+        "epsilon",
+        "n_c_cavity",
+        "m_ion",
+        "omega_m",
+        "rho_DM",
+        "sin2theta_avg",
+    ),
+    note="Large-n_c cyclotron/cavity dark-photon transition rate.",
+)
+
+add_relation(
+    name="sigma_cavity",
+    expression="delta_c * sqrt(Gamma_cavity * t_ave)",
+    depends_on=("delta_c", "Gamma_cavity", "t_ave"),
+    note="Cyclotron cavity signal scale in the large-n_c Gaussian approximation.",
 )
 
 add_relation(

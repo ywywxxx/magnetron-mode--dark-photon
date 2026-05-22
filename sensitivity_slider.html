@@ -120,6 +120,18 @@
       font: inherit;
     }
 
+    select {
+      width: 100%;
+      min-width: 0;
+      height: 34px;
+      padding: 6px 8px;
+      border: 1px solid var(--line);
+      border-radius: 6px;
+      color: var(--ink);
+      background: #fff;
+      font: inherit;
+    }
+
     .unit {
       color: var(--muted);
       font-size: 13px;
@@ -418,6 +430,34 @@
         </div>
       </div>
 
+      <div class="control" data-control="nC">
+        <div class="label-row">
+          <label for="nCRange">n_c</label>
+          <span class="range-text" id="nCRangeText"></span>
+        </div>
+        <input id="nCRange" type="range" min="0" max="1000" step="1">
+        <div class="input-row">
+          <input id="nCInput" type="number" step="any">
+          <div class="unit">quanta</div>
+        </div>
+      </div>
+
+      <div class="control">
+        <div class="label-row">
+          <label for="ionMassPreset">m_ion</label>
+          <span class="range-text">antiproton / Ca40+ / custom</span>
+        </div>
+        <select id="ionMassPreset">
+          <option value="antiproton">antiproton</option>
+          <option value="ca40">Ca40+</option>
+          <option value="custom">custom</option>
+        </select>
+        <div class="input-row">
+          <input id="ionMassCustomInput" type="number" step="any">
+          <div class="unit">GeV</div>
+        </div>
+      </div>
+
       <div class="control" data-control="tAve">
         <div class="label-row">
           <label for="tAveRange">t_ave</label>
@@ -521,6 +561,8 @@
             <div class="row"><span>R_trap</span><span id="outTrapRadius"></span></div>
             <div class="row"><span>T_wall</span><span id="outWallTemp"></span></div>
             <div class="row"><span>B_ext</span><span id="outBExt"></span></div>
+            <div class="row"><span>n_c</span><span id="outNC"></span></div>
+            <div class="row"><span>m_ion</span><span id="outMIon"></span></div>
             <div class="row"><span>t_ave</span><span id="outTAve"></span></div>
             <div class="row"><span>t_obs</span><span id="outTObs"></span></div>
             <div class="row"><span>SNR threshold</span><span id="outSNRThreshold"></span></div>
@@ -541,6 +583,7 @@
           <div>
             <div class="row"><span>kappa_m^2</span><span id="outKappa"></span></div>
             <div class="row"><span>epsilon_BBR</span><span id="outEpsilonBBR"></span></div>
+            <div class="row"><span>epsilon_cavity</span><span id="outCavityEpsilon"></span></div>
             <div class="row"><span>g_axion,min</span><span id="outAxionGMin"></span></div>
             <div class="row"><span>delta_c</span><span id="outDeltaC"></span></div>
             <div class="row"><span>delta_m</span><span id="outDeltaM"></span></div>
@@ -590,6 +633,8 @@
       wallTempMax: 1 * U.K,
       bExtMin: 0.1 * U.T,
       bExtMax: 20 * U.T,
+      nCMin: 1,
+      nCMax: 1e12,
       tObsMin: 1e-6 * U.sec,
       tObsMax: U.year,
       snrThresholdMin: 3,
@@ -606,6 +651,9 @@
       trapRadius: 0.3 * U.mm,
       wallTemp: 0.01 * U.K,
       bExt: 10 * U.T,
+      nC: 1e6,
+      ionMassPreset: "antiproton",
+      ionMassCustom: 0.9382720813 * U.GeV,
       tObs: 6 * U.sec,
       tAve: 2 * U.sec,
       snrThreshold: 5
@@ -623,6 +671,7 @@
       trapRadius: control("trapRadius", U.mm, "mm"),
       wallTemp: control("wallTemp", U.K, "K"),
       bExt: control("bExt", U.T, "T"),
+      nC: control("nC", 1, "quanta"),
       tAve: control("tAve", U.sec, "sec"),
       tObs: control("tObs", U.sec, "sec"),
       snrThreshold: control("snrThreshold", 1, "sigma")
@@ -705,6 +754,12 @@
 
     function setNumber(id, text) {
       document.getElementById(id).textContent = text;
+    }
+
+    function ionMass() {
+      if (state.ionMassPreset === "ca40") return 37.2609 * U.GeV;
+      if (state.ionMassPreset === "custom") return state.ionMassCustom;
+      return 0.9382720813 * U.GeV;
     }
 
     function limitColor(index) {
@@ -929,6 +984,7 @@
       setBounds("trapRadius", ranges.trapRadiusMin, ranges.trapRadiusMax);
       setBounds("wallTemp", ranges.wallTempMin, ranges.wallTempMax);
       setBounds("bExt", ranges.bExtMin, ranges.bExtMax);
+      setBounds("nC", ranges.nCMin, ranges.nCMax);
       setBounds("tObs", ranges.tObsMin, ranges.tObsMax);
       setBounds("tAve", state.tObs / 1e9, state.tObs);
       setBounds("snrThreshold", ranges.snrThresholdMin, ranges.snrThresholdMax);
@@ -937,6 +993,8 @@
       state.omegaZ = clamp(state.omegaZ, omegaZMin, omegaZMax);
       state.trapRadius = clamp(state.trapRadius, controls.trapRadius.min, controls.trapRadius.max);
       state.bExt = clamp(state.bExt, ranges.bExtMin, ranges.bExtMax);
+      state.nC = clamp(state.nC, ranges.nCMin, ranges.nCMax);
+      state.ionMassCustom = Math.max(state.ionMassCustom, 1e-6 * U.GeV);
       state.tAve = clamp(state.tAve, controls.tAve.min, controls.tAve.max);
       state.snrThreshold = clamp(state.snrThreshold, ranges.snrThresholdMin, ranges.snrThresholdMax);
       if (activeTune === "omegaC") {
@@ -965,6 +1023,9 @@
       syncControl("trapRadius", state.trapRadius);
       syncControl("wallTemp", state.wallTemp);
       syncControl("bExt", state.bExt);
+      syncControl("nC", state.nC);
+      document.getElementById("ionMassPreset").value = state.ionMassPreset;
+      document.getElementById("ionMassCustomInput").value = format(state.ionMassCustom, U.GeV, 8);
       syncControl("tAve", state.tAve);
       syncControl("tObs", state.tObs);
       syncControl("snrThreshold", state.snrThreshold);
@@ -1109,6 +1170,50 @@
       };
     }
 
+    function calculateCavityFor(point) {
+      const nRequired = point.tObs / point.tAve;
+      const pRequired = -Math.expm1(Math.log(0.05) / nRequired);
+      const zRequired = inverseOneSidedTailProbability(0.5 * pRequired);
+
+      const rhoDM = 4.5 * U.GeV / U.cm ** 3;
+      const R = point.radius;
+      const vDM = 1e-3;
+      const sin2thetaAvg = 2 / 3;
+      const sigmaNoise = 0.03 * U.Hz / Math.sqrt(point.tAve / U.sec);
+      const threshold = point.snrThreshold * sigmaNoise;
+      const deltaC = 2 * Math.PI * 57 * U.kHz * (10 * U.MHz / (point.omegaZ / (2 * Math.PI)));
+      const deltaDM = point.omegaM * 1e-6;
+      const kappa = Math.max((point.omegaM * R) ** 4, (point.omegaM * R * vDM) ** 2);
+      const nC = point.nC ?? state.nC;
+      const mIon = point.ionMass ?? ionMass();
+      const gammaOverEpsilon2 =
+        kappa
+        * (U.e ** 2 * Math.PI * (nC + 1) / (2 * mIon * point.omegaM))
+        * (rhoDM / deltaDM)
+        * sin2thetaAvg;
+      const signalPerEpsilon = deltaC * Math.sqrt(gammaOverEpsilon2 * point.tAve);
+      const epsilonMin = threshold / (zRequired * signalPerEpsilon);
+      const sigmaC = signalPerEpsilon * epsilonMin;
+      const gammaCavity = gammaOverEpsilon2 * epsilonMin ** 2;
+
+      if (!Number.isFinite(epsilonMin) || epsilonMin <= 0) {
+        return { error: "cavity calculation is not finite" };
+      }
+
+      return {
+        epsilonMin,
+        pRequired,
+        zRequired,
+        nRequired,
+        sigmaNoise,
+        sigmaC,
+        threshold,
+        deltaC,
+        gammaCavity,
+        kappa
+      };
+    }
+
     function calculateBBRBound(point, knownKappa = null) {
       const rhoDM = 4.5 * U.GeV / U.cm ** 3;
       const R = point.radius;
@@ -1156,6 +1261,8 @@
         trapRadius: state.trapRadius,
         wallTemp: state.wallTemp,
         bExt: state.bExt,
+        nC: state.nC,
+        ionMass: ionMass(),
         tAve: state.tAve,
         tObs: state.tObs,
         snrThreshold: state.snrThreshold
@@ -1190,23 +1297,33 @@
         if (!point) continue;
         const result = calculateFor(point);
         const fullAveResult = calculateFor({ ...point, tAve: point.tObs });
+        const cavityResult = calculateCavityFor(point);
+        const cavityFullAveResult = calculateCavityFor({ ...point, tAve: point.tObs });
         if (!result.error && Number.isFinite(result.epsilonMin) && result.epsilonMin > 0) {
           points.push({
             omegaM,
             epsilon: result.epsilonMin,
             epsilonFullAve: fullAveResult.error ? NaN : fullAveResult.epsilonMin,
+            epsilonCavity: cavityResult.error ? NaN : cavityResult.epsilonMin,
+            epsilonCavityFullAve: cavityFullAveResult.error ? NaN : cavityFullAveResult.epsilonMin,
             epsilonBBR: result.epsilonBBR
           });
         }
       }
 
       let currentFullAveResult = null;
+      let currentCavityResult = null;
+      let currentCavityFullAveResult = null;
       if (!currentResult.error && Number.isFinite(currentResult.epsilonMin)) {
         currentFullAveResult = calculateFor({ ...state, tAve: state.tObs });
+        currentCavityResult = calculateCavityFor(state);
+        currentCavityFullAveResult = calculateCavityFor({ ...state, tAve: state.tObs });
         points.push({
           omegaM: state.omegaM,
           epsilon: currentResult.epsilonMin,
           epsilonFullAve: currentFullAveResult.error ? NaN : currentFullAveResult.epsilonMin,
+          epsilonCavity: currentCavityResult.error ? NaN : currentCavityResult.epsilonMin,
+          epsilonCavityFullAve: currentCavityFullAveResult.error ? NaN : currentCavityFullAveResult.epsilonMin,
           epsilonBBR: currentResult.epsilonBBR,
           current: true
         });
@@ -1220,7 +1337,7 @@
       const xMin = 10 ** (Math.log10(massMin) - xPadding);
       const xMax = 10 ** (Math.log10(massMax) + xPadding);
       const yValues = points
-        .flatMap(p => [p.epsilon, p.epsilonFullAve, p.epsilonBBR])
+        .flatMap(p => [p.epsilon, p.epsilonFullAve, p.epsilonCavity, p.epsilonCavityFullAve, p.epsilonBBR])
         .filter(y => Number.isFinite(y) && y > 0);
       for (const limit of existingLimitData.filter(limit => limit.visible)) {
         for (const p of limit.points) {
@@ -1351,6 +1468,41 @@
       ctx.stroke();
       ctx.setLineDash([]);
 
+      ctx.strokeStyle = "#581c87";
+      ctx.lineWidth = 2;
+      ctx.setLineDash([]);
+      ctx.beginPath();
+      started = false;
+      for (const p of points.filter(p => !p.current && Number.isFinite(p.epsilonCavity) && p.epsilonCavity > 0)) {
+        const px = xToPx(p.omegaM / U.neV);
+        const py = yToPx(p.epsilonCavity);
+        if (!started) {
+          ctx.moveTo(px, py);
+          started = true;
+        } else {
+          ctx.lineTo(px, py);
+        }
+      }
+      ctx.stroke();
+
+      ctx.strokeStyle = "#581c87";
+      ctx.lineWidth = 1.5;
+      ctx.setLineDash([2, 4]);
+      ctx.beginPath();
+      started = false;
+      for (const p of points.filter(p => !p.current && Number.isFinite(p.epsilonCavityFullAve) && p.epsilonCavityFullAve > 0)) {
+        const px = xToPx(p.omegaM / U.neV);
+        const py = yToPx(p.epsilonCavityFullAve);
+        if (!started) {
+          ctx.moveTo(px, py);
+          started = true;
+        } else {
+          ctx.lineTo(px, py);
+        }
+      }
+      ctx.stroke();
+      ctx.setLineDash([]);
+
       ctx.strokeStyle = "#9a3412";
       ctx.lineWidth = 2;
       ctx.setLineDash([6, 5]);
@@ -1402,6 +1554,17 @@
           ctx.lineWidth = 2;
           ctx.stroke();
         }
+
+        if (currentCavityResult && Number.isFinite(currentCavityResult.epsilonMin) && currentCavityResult.epsilonMin > 0) {
+          const pyCavity = yToPx(currentCavityResult.epsilonMin);
+          ctx.fillStyle = "#581c87";
+          ctx.beginPath();
+          ctx.rect(px - 5, pyCavity - 5, 10, 10);
+          ctx.fill();
+          ctx.strokeStyle = "#ffffff";
+          ctx.lineWidth = 2;
+          ctx.stroke();
+        }
       }
 
       ctx.font = "12px Inter, system-ui, sans-serif";
@@ -1440,6 +1603,27 @@
       ctx.setLineDash([]);
       ctx.fillStyle = "#1f2933";
       ctx.fillText("t_ave = t_obs", legendX + 36, legendY);
+      legendY += 20;
+      ctx.strokeStyle = "#581c87";
+      ctx.lineWidth = 2;
+      ctx.setLineDash([]);
+      ctx.beginPath();
+      ctx.moveTo(legendX, legendY);
+      ctx.lineTo(legendX + 28, legendY);
+      ctx.stroke();
+      ctx.fillStyle = "#1f2933";
+      ctx.fillText("cyclotron cavity", legendX + 36, legendY);
+      legendY += 20;
+      ctx.strokeStyle = "#581c87";
+      ctx.lineWidth = 1.5;
+      ctx.setLineDash([2, 4]);
+      ctx.beginPath();
+      ctx.moveTo(legendX, legendY);
+      ctx.lineTo(legendX + 28, legendY);
+      ctx.stroke();
+      ctx.setLineDash([]);
+      ctx.fillStyle = "#1f2933";
+      ctx.fillText("cavity t_ave = t_obs", legendX + 36, legendY);
       legendY += 20;
       ctx.strokeStyle = "#9a3412";
       ctx.setLineDash([6, 5]);
@@ -1734,6 +1918,8 @@
       setNumber("outTrapRadius", `${format(state.trapRadius, U.mm)} mm`);
       setNumber("outWallTemp", `${format(state.wallTemp, U.K)} K`);
       setNumber("outBExt", `${format(state.bExt, U.T)} T`);
+      setNumber("outNC", format(state.nC, 1));
+      setNumber("outMIon", `${format(ionMass(), U.GeV)} GeV`);
       setNumber("outTAve", `${format(state.tAve, U.sec)} sec`);
       setNumber("outTObs", `${format(state.tObs, U.sec)} sec`);
       setNumber("outSNRThreshold", state.snrThreshold.toPrecision(4));
@@ -1744,7 +1930,7 @@
       if (result.error) {
         status.textContent = result.error;
         status.className = "status error";
-        for (const id of ["epsilonMin", "pDet", "nDet", "outSigmaNoise", "outSigmaM", "outThreshold", "outZThr", "outGammaM", "outKappa", "outEpsilonBBR", "outAxionGMin", "outDeltaC", "outDeltaM"]) {
+        for (const id of ["epsilonMin", "pDet", "nDet", "outSigmaNoise", "outSigmaM", "outThreshold", "outZThr", "outGammaM", "outKappa", "outEpsilonBBR", "outCavityEpsilon", "outAxionGMin", "outDeltaC", "outDeltaM"]) {
           setNumber(id, "not finite");
         }
         drawPlot(result);
@@ -1764,6 +1950,8 @@
       setNumber("outGammaM", `${format(result.gammaM, U.Hz)} Hz`);
       setNumber("outKappa", result.kappa.toExponential(6));
       setNumber("outEpsilonBBR", result.epsilonBBR > 0 ? result.epsilonBBR.toExponential(6) : "0");
+      const cavityResult = calculateCavityFor(state);
+      setNumber("outCavityEpsilon", cavityResult.error ? "not finite" : cavityResult.epsilonMin.toExponential(6));
       setNumber("outAxionGMin", axionResult.error ? "not finite" : `${axionResult.gMin.toExponential(6)} GeV^-1`);
       setNumber("outDeltaC", `${format(result.deltaC, U.Hz)} Hz`);
       setNumber("outDeltaM", `${format(result.deltaM, U.Hz)} Hz`);
@@ -1803,6 +1991,8 @@
         state.wallTemp = clamp(value, ranges.wallTempMin, ranges.wallTempMax);
       } else if (name === "bExt") {
         state.bExt = clamp(value, ranges.bExtMin, ranges.bExtMax);
+      } else if (name === "nC") {
+        state.nC = clamp(value, ranges.nCMin, ranges.nCMax);
       } else if (name === "tAve") {
         tAveManuallySet = true;
         state.tAve = clamp(value, controls.tAve.min, controls.tAve.max);
@@ -1843,6 +2033,18 @@
     });
     document.getElementById("hideAllAxionLimits").addEventListener("click", () => {
       setVisibleAxionLimits(() => false);
+    });
+    document.getElementById("ionMassPreset").addEventListener("change", event => {
+      state.ionMassPreset = event.target.value;
+      syncUI();
+    });
+    document.getElementById("ionMassCustomInput").addEventListener("change", event => {
+      const value = Number(event.target.value);
+      if (Number.isFinite(value) && value > 0) {
+        state.ionMassCustom = value * U.GeV;
+        state.ionMassPreset = "custom";
+        syncUI();
+      }
     });
 
     syncUI();

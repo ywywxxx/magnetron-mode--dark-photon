@@ -1,16 +1,34 @@
 # Cyclotron Cavity Sensitivity Logic
 
-This note sketches the deep-purple cyclotron/cavity curve. The statistics of
-the occupation distribution are intentionally left as a placeholder function.
+This note sketches the deep-purple cyclotron/cavity curve. It uses the same
+large-occupation Gaussian/random-walk statistics as the green magnetron curve.
+
+## Large-n_c Approximation
+
+For high cyclotron occupation, the lower boundary at `n_c = 0` is far away. We
+therefore approximate the net cyclotron response as a symmetric random walk in
+occupation number rather than a ground-state birth process.
+
+The signal statistic is modeled as
+
+```text
+x_cavity ~ Normal(0, sigma_cavity)
+```
+
+with
+
+```text
+sigma_cavity = delta_c * sqrt(Gamma_cavity * t_ave)
+```
 
 ## Rate
 
-Use the single-quantum rate scale
+Use
 
 ```text
-Gamma0_cavity =
+Gamma_cavity =
   kappa_m_squared
-  * epsilon^2 * e^2 * pi
+  * epsilon^2 * e^2 * pi * (n_c + 1)
   / (2 * m_ion * m)
   * rho_DM / Delta_omega
   * sin2theta_avg
@@ -25,19 +43,13 @@ kappa_m_squared = max((omega_m * R)^4, (omega_m * R * v_DM)^2)
 sin2theta_avg = 2/3
 ```
 
-The transition rate from a cyclotron occupation `n_c` contains the matrix
-element factor
+The current default is
 
 ```text
-Gamma_up(n_c) = Gamma0_cavity * (n_c + 1)
+n_c = 1e6
 ```
 
-The later distribution model should decide how to include downward transitions.
-For now, everything after this point only needs the dimensionless time
-
-```text
-tau = Gamma0_cavity * t_ave
-```
+and `n_c` is adjustable in the web UI.
 
 ## Ion Mass
 
@@ -49,9 +61,9 @@ m_antiproton ~= 0.938272 GeV
 m_Ca40 ~= 37.26 GeV
 ```
 
-Also allow a custom `m_ion` input in GeV.
+The UI also allows a custom `m_ion` input in GeV.
 
-## Signal Threshold
+## Detection Probability
 
 Use the same readout noise and SNR threshold as the magnetron curve:
 
@@ -60,35 +72,16 @@ sigma_noise = 0.03 Hz / sqrt(t_ave / sec)
 thr = snr_threshold * sigma_noise
 ```
 
-If one cyclotron quantum produces a frequency jump `delta_c`, then the required
-occupation threshold is
+Define
 
 ```text
-n_thr = ceil(thr / delta_c)
+z_thr = thr / sigma_cavity
 ```
 
-with at least one quantum required:
+For two-sided detection,
 
 ```text
-n_thr = max(1, ceil(thr / delta_c))
-```
-
-## Placeholder Distribution
-
-Do not assume a Poisson distribution yet. Define a placeholder survival
-probability:
-
-```text
-P_cav_survival(n_thr, tau) = P(n_c(t_ave) >= n_thr | n_c(0) = 0)
-```
-
-This function will later be supplied by simulation, a master-equation solver, or
-an analytic approximation.
-
-The single-trial detection probability is
-
-```text
-P_det = P_cav_survival(n_thr, tau)
+P_det = erfc(z_thr / sqrt(2))
 ```
 
 ## Repeated Trials
@@ -105,36 +98,22 @@ The 95 percent detection condition is
 1 - (1 - P_det)^N = 0.95
 ```
 
-so the required single-trial probability is
+or
 
 ```text
 P_req = 1 - 0.05^(1/N)
 ```
 
-Equivalently, using a stable expression,
+Using the same inversion as the green curve, let `z_req` satisfy
 
 ```text
-P_req = -expm1(log(0.05) / N)
+P_req = erfc(z_req / sqrt(2))
 ```
 
-## Inverting The Placeholder Distribution
-
-Define the inverse function
+Then the required signal scale is
 
 ```text
-tau_req = inverse_P_cav_survival(n_thr, P_req)
-```
-
-meaning
-
-```text
-P_cav_survival(n_thr, tau_req) = P_req
-```
-
-Then
-
-```text
-Gamma0_req = tau_req / t_ave
+sigma_cavity,req = thr / z_req
 ```
 
 ## Coupling Reach
@@ -142,15 +121,15 @@ Gamma0_req = tau_req / t_ave
 Since
 
 ```text
-Gamma0_cavity = epsilon^2 * Gamma0_over_epsilon2
+Gamma_cavity = epsilon^2 * Gamma_cavity_over_epsilon2
 ```
 
 where
 
 ```text
-Gamma0_over_epsilon2 =
+Gamma_cavity_over_epsilon2 =
   kappa_m_squared
-  * e^2 * pi
+  * e^2 * pi * (n_c + 1)
   / (2 * m_ion * omega_m)
   * rho_DM / (1e-6 * omega_m)
   * sin2theta_avg
@@ -160,17 +139,18 @@ the minimum dark-photon mixing is
 
 ```text
 epsilon_min_cavity =
-  sqrt(Gamma0_req / Gamma0_over_epsilon2)
+  thr / (
+    z_req * delta_c * sqrt(Gamma_cavity_over_epsilon2 * t_ave)
+  )
 ```
 
-## Placeholder Implementation Shape
+## Plot Lines
 
-The plotting code can be structured around these two functions:
+The first mass-scan plot includes two deep-purple lines:
 
 ```text
-P_cav_survival(n_thr, tau)
-inverse_P_cav_survival(n_thr, P_req)
+solid purple:  epsilon_min_cavity(t_ave)
+dashed purple: epsilon_min_cavity(t_ave = t_obs)
 ```
 
-The rest of the curve logic does not need to know whether these functions come
-from Monte Carlo, a master equation, or a closed-form approximation.
+The green magnetron curves are unchanged.
