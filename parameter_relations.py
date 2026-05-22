@@ -294,10 +294,11 @@ add_relation(
 add_relation(
     name="Gamma_m_axion_free",
     expression=(
-        "g_a**2 / m_a_resonance**3 * B_ext**2 * "
+        "kappa_m_squared * g_a**2 / m_a_resonance**3 * B_ext**2 * "
         "e**2*pi*(n_m_axion + 1)/(2*m_e) * rho_DM/Delta_omega_axion"
     ),
     depends_on=(
+        "kappa_m_squared",
         "g_a",
         "m_a_resonance",
         "B_ext",
@@ -305,7 +306,7 @@ add_relation(
         "rho_DM",
         "Delta_omega_axion",
     ),
-    note="Axion free transition rate. g_a is interpreted as g_{a gamma} in natural units.",
+    note="Axion free transition rate with the same geometric response kappa_m_squared. g_a is interpreted as g_{a gamma} in natural units.",
 )
 
 add_relation(
