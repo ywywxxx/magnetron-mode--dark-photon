@@ -1335,7 +1335,7 @@
 
       ctx.strokeStyle = "#176b5d";
       ctx.lineWidth = 1.5;
-      ctx.setLineDash([]);
+      ctx.setLineDash([2, 4]);
       ctx.beginPath();
       started = false;
       for (const p of points.filter(p => !p.current && Number.isFinite(p.epsilonFullAve) && p.epsilonFullAve > 0)) {
@@ -1432,7 +1432,7 @@
       legendY += 20;
       ctx.strokeStyle = "#176b5d";
       ctx.lineWidth = 1.5;
-      ctx.setLineDash([]);
+      ctx.setLineDash([2, 4]);
       ctx.beginPath();
       ctx.moveTo(legendX, legendY);
       ctx.lineTo(legendX + 28, legendY);
@@ -1631,7 +1631,7 @@
 
       ctx.strokeStyle = "#176b5d";
       ctx.lineWidth = 1.5;
-      ctx.setLineDash([]);
+      ctx.setLineDash([2, 4]);
       ctx.beginPath();
       started = false;
       for (const p of sensitivityCurve.filter(p => Number.isFinite(p.gFullAve) && p.gFullAve > 0)) {
@@ -1701,7 +1701,7 @@
       legendY += 20;
       ctx.strokeStyle = "#176b5d";
       ctx.lineWidth = 1.5;
-      ctx.setLineDash([]);
+      ctx.setLineDash([2, 4]);
       ctx.beginPath();
       ctx.moveTo(legendX, legendY);
       ctx.lineTo(legendX + 28, legendY);
