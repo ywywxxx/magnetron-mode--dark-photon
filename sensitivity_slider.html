@@ -1333,9 +1333,9 @@
       }
       ctx.stroke();
 
-      ctx.strokeStyle = "#2563eb";
-      ctx.lineWidth = 2;
-      ctx.setLineDash([2, 4]);
+      ctx.strokeStyle = "#176b5d";
+      ctx.lineWidth = 1.5;
+      ctx.setLineDash([]);
       ctx.beginPath();
       started = false;
       for (const p of points.filter(p => !p.current && Number.isFinite(p.epsilonFullAve) && p.epsilonFullAve > 0)) {
@@ -1391,7 +1391,7 @@
 
         if (currentFullAveResult && Number.isFinite(currentFullAveResult.epsilonMin) && currentFullAveResult.epsilonMin > 0) {
           const pyFullAve = yToPx(currentFullAveResult.epsilonMin);
-          ctx.fillStyle = "#2563eb";
+          ctx.fillStyle = "#176b5d";
           ctx.beginPath();
           ctx.moveTo(px, pyFullAve - 6);
           ctx.lineTo(px + 6, pyFullAve + 5);
@@ -1430,8 +1430,9 @@
       ctx.fillStyle = "#1f2933";
       ctx.fillText("95% detection", legendX + 36, legendY);
       legendY += 20;
-      ctx.strokeStyle = "#2563eb";
-      ctx.setLineDash([2, 4]);
+      ctx.strokeStyle = "#176b5d";
+      ctx.lineWidth = 1.5;
+      ctx.setLineDash([]);
       ctx.beginPath();
       ctx.moveTo(legendX, legendY);
       ctx.lineTo(legendX + 28, legendY);
@@ -1628,9 +1629,9 @@
       }
       ctx.stroke();
 
-      ctx.strokeStyle = "#2563eb";
-      ctx.lineWidth = 2;
-      ctx.setLineDash([2, 4]);
+      ctx.strokeStyle = "#176b5d";
+      ctx.lineWidth = 1.5;
+      ctx.setLineDash([]);
       ctx.beginPath();
       started = false;
       for (const p of sensitivityCurve.filter(p => Number.isFinite(p.gFullAve) && p.gFullAve > 0)) {
@@ -1659,7 +1660,7 @@
 
         if (currentFullAveResult && Number.isFinite(currentFullAveResult.gMin) && currentFullAveResult.gMin > 0) {
           const pyFullAve = yToPx(currentFullAveResult.gMin);
-          ctx.fillStyle = "#2563eb";
+          ctx.fillStyle = "#176b5d";
           ctx.beginPath();
           ctx.moveTo(px, pyFullAve - 6);
           ctx.lineTo(px + 6, pyFullAve + 5);
@@ -1698,8 +1699,9 @@
       ctx.fillStyle = "#1f2933";
       ctx.fillText("axion reach", legendX + 36, legendY);
       legendY += 20;
-      ctx.strokeStyle = "#2563eb";
-      ctx.setLineDash([2, 4]);
+      ctx.strokeStyle = "#176b5d";
+      ctx.lineWidth = 1.5;
+      ctx.setLineDash([]);
       ctx.beginPath();
       ctx.moveTo(legendX, legendY);
       ctx.lineTo(legendX + 28, legendY);
